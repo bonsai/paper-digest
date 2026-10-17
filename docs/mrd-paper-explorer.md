@@ -3,8 +3,8 @@
 - Status: Draft
 - Product: `bonsai/paper-digest`
 - Version: 0.2
-- Primary audience: AI動画生成・アニメーション研究を調査する研究者、制作ワークフロー設計者
-- Scope: ユーザーが指定する10本のPDFを対象とする。初期の実証・評価対象はアニメ動画生成研究を中心とする。
+- Primary audience: AI・動画生成・経営学・組織論を、根拠付きで理解・説明したい読者、研究者、制作ワークフロー設計者
+- Scope: ユーザーが指定する10本のPDFを対象とする。初期コーパスはAI動画生成を起点に、経営学・組織論・人間とAIの協働へ広げる。
 
 ## 1. ビジョン
 
@@ -116,9 +116,7 @@ PDF登録 → 抽出状態を確認 → 論文カードを確認 → グラフ�
 
 Use `bonsai/r2v/papers.yaml` as the research catalog of record for seed-paper metadata and research intent, and `bonsai/r2v/rag/papers.yml` as the source of explicit PDF download URLs for the three existing RAG seed papers. Mirror source metadata into `data/sources/r2v-papers.yaml` with the original record URL, canonical paper URL, PDF URL when verified, and download status.
 
-The catalog currently contains **8 seed records**, not 10. The three RAG records have explicit `pdf_url` fields; additional arXiv PDF URLs may be formed from their verified arXiv identifiers. Records without a verified direct PDF URL must remain marked unresolved until checked against the publisher/source page. Do not silently invent two extra papers to make the count reach ten.
-
-The MVP target is 10 PDFs. Until two additional sources are approved, report the corpus as incomplete.
+The source manifest now contains **14 candidate records**: 9 mirrored from `bonsai/r2v` and 5 additions spanning Toyota/management, team learning, and human-AI collaboration. This is a candidate list, not a claim that 14 PDFs are downloadable or approved. Direct PDF URLs and license/access status for the five additions remain unverified. Select a balanced set of 10, verify each file and its terms, then report the corpus as complete only after 10 valid PDFs are available.
 
 ### Kaggle ML use cases
 
