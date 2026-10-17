@@ -66,20 +66,3 @@
 
 各実験は「便利そう」で採用せず、作業時間、レビュー修正量、テスト結果、再オープン率、根拠リンクの正確さなど、測定可能な指標を事前に定める。
 
-
-## E. LLMのみのプロンプト手法・評価研究
-
-詳細な文献マップ、比較手法、実験プロトコルは [prompt-only-llm-evaluation.md](prompt-only-llm-evaluation.md) に分離して管理する。
-
-| 研究 | 主題 | 参照 |
-|---|---|---|
-| A Survey of Prompt Engineering Methods in Large Language Models for Different NLP Tasks (2024) | プロンプト手法の分類 | [arXiv](https://arxiv.org/abs/2407.12994) |
-| A Systematic Survey of Prompt Engineering in Large Language Models (2024) | 技法・用途・限界の体系化 | [arXiv](https://arxiv.org/abs/2402.07927) |
-| Large Language Models Are Zero-Shot Reasoners (NeurIPS 2022) | Zero-shot CoT | [論文](https://papers.neurips.cc/paper_files/paper/2022/hash/8bb0d291acd4acf06ef112099c16f326-Abstract-Conference.html) |
-| PromptRobust (2023) | 言い換え・誤字などへの頑健性 | [arXiv](https://arxiv.org/abs/2306.04528) |
-| G-Eval (EMNLP 2023) | ルーブリック型LLM評価と人間評価との整合 | [ACL Anthology](https://aclanthology.org/2023.emnlp-main.153/) |
-| Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena (NeurIPS 2023) | LLM評価者と人間の選好、評価バイアス | [arXiv](https://arxiv.org/abs/2306.05685) |
-| Humans or LLMs as the Judge? (EMNLP 2024) | 人間・LLM双方の判定バイアス | [ACL Anthology](https://aclanthology.org/2024.emnlp-main.474/) |
-| Judging the Judges: Position Bias (2025) | 順序を入れ替えた評価の安定性 | [ACL Anthology](https://aclanthology.org/2025.ijcnlp-long.18/) |
-
-> 状態: 調査候補の整理。全論文の全文読解、PDF取得、実験再現は未完了。
