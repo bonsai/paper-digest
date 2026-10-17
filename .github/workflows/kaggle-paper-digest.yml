@@ -1,0 +1,162 @@
+name: Run Paper Digest on Kaggle
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "notebooks/kaggle/paper_digest.py"
+      - "data/sources/**"
+      - ".github/workflows/kaggle-paper-digest.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kaggle-paper-digest-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  run-kaggle:
+    name: Submit and run Kaggle pipeline
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+      KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
+      KERNEL_SLUG: paper-digest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install Kaggle CLI
+        run: python -m pip install --upgrade kaggle
+
+      - name: Configure Kaggle credentials
+        shell: bash
+        run: |
+          if [[ -z "$KAGGLE_USERNAME" || -z "$KAGGLE_KEY" ]]; then
+            echo "::error::Set repository Actions secrets KAGGLE_USERNAME and KAGGLE_KEY."
+            exit 1
+          fi
+          mkdir -p "$HOME/.kaggle"
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          path = Path.home() / ".kaggle" / "kaggle.json"
+          path.write_text(json.dumps({
+              "username": os.environ["KAGGLE_USERNAME"],
+              "key": os.environ["KAGGLE_KEY"],
+          }), encoding="utf-8")
+          path.chmod(0o600)
+          PY
+
+      - name: Prepare Kaggle script and metadata
+        shell: bash
+        run: |
+          mkdir -p .kaggle-run
+          cp notebooks/kaggle/paper_digest.py .kaggle-run/paper_digest.py
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          metadata = {
+              "id": f"{os.environ['KAGGLE_USERNAME']}/paper-digest",
+              "title": "Paper Digest",
+              "code_file": "paper_digest.py",
+              "language": "python",
+              "kernel_type": "script",
+              "is_private": "true",
+              "enable_gpu": "false",
+              "enable_internet": "true",
+              "machine_shape": "",
+              "dataset_sources": [],
+              "competition_sources": [],
+              "kernel_sources": [],
+              "model_sources": [],
+          }
+          Path(".kaggle-run/kernel-metadata.json").write_text(
+              json.dumps(metadata, indent=2) + "\n", encoding="utf-8"
+          )
+          PY
+          cat .kaggle-run/kernel-metadata.json
+
+      - name: Push script to Kaggle and start run
+        run: |
+          kaggle kernels push -p .kaggle-run --timeout 3600
+
+      - name: Wait for Kaggle run
+        shell: bash
+        run: |
+          KERNEL_ID="$KAGGLE_USERNAME/$KERNEL_SLUG"
+          for attempt in $(seq 1 90); do
+            status="$(kaggle kernels status "$KERNEL_ID" 2>&1)" || {
+              echo "$status"
+              echo "Status query failed; retrying ($attempt/90)."
+              sleep 30
+              continue
+            }
+            echo "Kaggle status ($attempt/90): $status"
+            if echo "$status" | grep -Eiq '(^|[^[:alpha:]])(COMPLETE|SUCCEEDED|SUCCESS)([^[:alpha:]]|$)'; then
+              exit 0
+            fi
+            if echo "$status" | grep -Eiq '(^|[^[:alpha:]])(ERROR|FAILED|CANCELLED|CANCELED|ABORTED)([^[:alpha:]]|$)'; then
+              echo "::error::Kaggle kernel failed."
+              exit 1
+            fi
+            sleep 30
+          done
+          echo "::error::Timed out waiting for Kaggle (45 minutes)."
+          exit 1
+
+      - name: Download Kaggle outputs
+        run: |
+          mkdir -p artifacts/paper-digest
+          kaggle kernels output "$KAGGLE_USERNAME/$KERNEL_SLUG" -p artifacts/paper-digest --force
+          find artifacts/paper-digest -type f -print
+
+      - name: Validate pipeline manifest
+        shell: python
+        run: |
+          import json
+          import sys
+          from pathlib import Path
+
+          manifests = list(Path("artifacts/paper-digest").rglob("run-manifest.json"))
+          if not manifests:
+              raise SystemExit("Kaggle output did not contain run-manifest.json")
+          manifest_path = manifests[0]
+          manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+          print(json.dumps(manifest, ensure_ascii=False, indent=2))
+          if manifest.get("paper_count", 0) < 1:
+              raise SystemExit("Pipeline completed but extracted zero papers")
+          if manifest.get("page_aware_chunk_count", 0) < 1:
+              raise SystemExit("Pipeline completed but extracted zero text chunks")
+          print(f"Validated manifest: {manifest_path}")
+
+      - name: Upload Paper Digest results
+        uses: actions/upload-artifact@v4
+        with:
+          name: paper-digest-${{ github.run_number }}
+          path: artifacts/paper-digest/
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Show Kaggle logs on failure
+        if: failure()
+        shell: bash
+        run: |
+          if [[ -n "$KAGGLE_USERNAME" && -n "$KAGGLE_KEY" ]]; then
+            kaggle kernels logs "$KAGGLE_USERNAME/$KERNEL_SLUG" || true
+          fi
