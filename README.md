@@ -9,6 +9,8 @@ The first milestone is intentionally small: ingest a user-provided corpus of aro
 - [Market Requirements Document](docs/mrd-paper-explorer.md)
 - [Product Requirements Document](docs/prd-paper-explorer.md)
 - [Kaggle notebook scaffold](notebooks/kaggle/paper-digest-mvp.ipynb)
+- [Paper candidate list: AI video, Toyota/organization, human-AI](data/sources/paper-list.md)
+- [Machine-readable source manifest](data/sources/r2v-papers.yaml)
 
 ## MVP workflow
 
