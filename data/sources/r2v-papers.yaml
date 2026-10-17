@@ -4,7 +4,9 @@ source_files:
   seed_catalog: "papers.yaml"
   explicit_pdf_manifest: "rag/papers.yml"
 target_pdf_count: 10
-status: "incomplete_source_selection"
+status: "candidate_list_expanded_pdf_access_unverified"
+source_record_count: 14
+note: "9 R2V seed records plus 5 management/organization/human-AI candidates; select and validate a 10-PDF corpus before ingestion"
 policy:
   download_mode: explicit_opt_in
   commit_pdf_files: false
@@ -102,8 +104,69 @@ papers:
     local_path: "data/pdfs/2408.06070.pdf"
     license_status: "needs_review"
     download_status: "not_downloaded"
+  - id: toyota-jishuken-2022
+    title: "Inter-Organizational Knowledge Sharing and Creation in Toyota Group"
+    title_ja: "トヨタ自主研にみる組織間知識共有・知識創造マネジメント"
+    authors: ["Shumpei Iwao", "Yumi Kato"]
+    year: 2022
+    domain: "management_organization"
+    source_url: "https://www.jstage.jst.go.jp/article/seisankanri/29/1/29_7/_article/-char/en"
+    pdf_url: "https://www.jstage.jst.go.jp/article/seisankanri/29/1/29_7/_pdf/-char/en"
+    source_type: "open_access_journal"
+    local_path: "data/pdfs/toyota-jishuken-2022.pdf"
+    license_status: "CC-BY-4.0_verify_current_terms"
+    download_status: "candidate_url_needs_verification"
+    manga_hook: "会社をまたいで、どうやって改善の知恵を共有する？"
+  - id: toyota-evolution-production-systems-2012
+    title: "The Evolution of Production Systems: Exploring the Sources of Toyota's Competitiveness"
+    authors: ["Takahiro Fujimoto"]
+    year: 2012
+    domain: "management_organization"
+    source_url: "https://www.jstage.jst.go.jp/article/abas/11/0/11_25/_article/-char/en"
+    pdf_url: "https://www.jstage.jst.go.jp/article/abas/11/0/11_25/_pdf"
+    source_type: "open_access_journal"
+    local_path: "data/pdfs/toyota-evolution-production-systems-2012.pdf"
+    license_status: "CC-BY-4.0_verify_current_terms"
+    download_status: "candidate_url_needs_verification"
+    manga_hook: "製品を作る力だけでなく、改善する力も育てる"
+  - id: psychological-safety-team-learning-1999
+    title: "Psychological Safety and Learning Behavior in Work Teams"
+    authors: ["Amy Edmondson"]
+    year: 1999
+    domain: "management_organization"
+    source_url: "https://dash.harvard.edu/entities/publication/13a7b031-0fdd-45ec-a7e0-2b80e2bc679f"
+    pdf_url: "https://web.mit.edu/curhan/www/docs/Articles/15341_Readings/Organizational_Learning_and_Change/Edmondson_1999_Psychological_safety.pdf"
+    source_type: "author_copy_candidate"
+    local_path: "data/pdfs/psychological-safety-team-learning-1999.pdf"
+    license_status: "copyright_status_needs_review"
+    download_status: "candidate_url_needs_verification"
+    manga_hook: "失敗や質問を言えるチームは、どう学ぶ？"
+  - id: toyota-way-services-lean-product-development-2006
+    title: "The Toyota Way in Services: The Case of Lean Product Development"
+    authors: ["Jeffrey K. Liker", "James M. Morgan"]
+    year: 2006
+    domain: "management_organization"
+    source_url: "https://journals.aom.org/doi/10.5465/amp.2006.20591002"
+    pdf_url: "https://journals.aom.org/doi/pdf/10.5465/amp.2006.20591002"
+    source_type: "publisher_pdf_candidate"
+    local_path: "data/pdfs/toyota-way-services-lean-product-development-2006.pdf"
+    license_status: "copyright_status_needs_review"
+    download_status: "candidate_url_needs_verification"
+    manga_hook: "工場の改善方法を、企画やサービスの仕事にも活かせる？"
+  - id: human-ai-complementarity-2025
+    title: "Complementarity in human-AI collaboration: concept, sources, and evidence"
+    authors: ["Patrick Hemmer", "Max Schemmer", "Niklas Kühl", "Michael Vössing", "Gerhard Satzger"]
+    year: 2025
+    domain: "human_ai_collaboration"
+    source_url: "https://www.tandfonline.com/doi/full/10.1080/0960085X.2025.2475962"
+    pdf_url: null
+    source_type: "open_access_journal"
+    local_path: null
+    license_status: "verify_open_access_license"
+    download_status: "unresolved_pdf_url"
+    manga_hook: "人間とAIの得意分野を組み合わせると、何が変わる？"
 notes:
-  - "The source catalog currently has 8 records; the 10-PDF target is not yet satisfied."
-  - "Only direct PDF URLs verified from known arXiv identifiers are populated for the arXiv records."
+  - "The manifest contains 14 candidate records: 9 mirrored from the R2V seed catalog and 5 cross-domain additions. The 10-PDF corpus target is not yet satisfied; direct URL availability and license status must be checked before download."
+  - "ArXiv URLs are derived from cataloged arXiv identifiers. Added direct PDF URLs are candidates and must pass HTTP, PDF-signature, and access checks before being marked verified."
   - "Publisher/website records without a verified direct PDF URL remain unresolved; do not guess URLs."
   - "Verify source metadata and current licenses before redistribution."
