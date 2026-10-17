@@ -108,3 +108,25 @@ PDF登録 → 抽出状態を確認 → 論文カードを確認 → グラフ�
 - RAG回答生成に使うモデルと、検索のみで動かすフォールバック
 - グラフをノートブック内に置くか、静的HTMLとして共有するか
 - OCRを後続版で追加するか
+
+
+## 10. R2V source corpus and Kaggle ML extension (v0.3)
+
+### Source of seed papers
+
+Use `bonsai/r2v/papers.yaml` as the research catalog of record for seed-paper metadata and research intent, and `bonsai/r2v/rag/papers.yml` as the source of explicit PDF download URLs for the three existing RAG seed papers. Mirror source metadata into `data/sources/r2v-papers.yaml` with the original record URL, canonical paper URL, PDF URL when verified, and download status.
+
+The catalog currently contains **8 seed records**, not 10. The three RAG records have explicit `pdf_url` fields; additional arXiv PDF URLs may be formed from their verified arXiv identifiers. Records without a verified direct PDF URL must remain marked unresolved until checked against the publisher/source page. Do not silently invent two extra papers to make the count reach ten.
+
+The MVP target is 10 PDFs. Until two additional sources are approved, report the corpus as incomplete.
+
+### Kaggle ML use cases
+
+Kaggle is the experimental environment for CPU-friendly baseline ML on the small corpus, not the canonical data store. The first ML iteration focuses on:
+
+1. **Keywording:** TF-IDF/keyphrase baseline, term normalization, per-paper keyword candidates, and optionally unsupervised grouping. Keep the source chunk and page for every candidate keyword.
+2. **Intent classification:** classify research questions/queries into explicit intents such as `summarize`, `compare`, `find_method`, `find_dataset`, `find_metric`, `find_limitations`, `find_evidence`, and `identify_gap`.
+3. **Evaluation:** manually review keyword precision and intent labels; compare the ML candidate with a simple lexical baseline.
+4. **Human-in-the-loop:** label corrections become the training/evaluation dataset; model outputs are suggestions, not ground truth.
+
+Ten papers are too few to justify a reliable supervised model from paper count alone. Keywording should begin with unsupervised/lexical baselines. Intent classification requires a separately maintained, manually reviewed query-label dataset and must report the small-sample limitation. Never manufacture evaluation scores or treat synthetic examples as real user behavior.
