@@ -1,176 +1,290 @@
-# PRD：アニメ研究論文インサイト・エクスプローラー
+# PRD — Paper Digest MVP
 
-- 文書種別：Product Requirements Document
-- 状態：Draft / MVP仕様
-- 関連MRD：[mrd-paper-explorer.md](./mrd-paper-explorer.md)
-- 対象プロジェクト：bonsai/r2v
-- 初期入力：指定された論文PDF 10本
-- 実行環境：Kaggle Notebook
-- 基本スタック：Python、pandas、NumPy、Plotly、SQLite FTS5を用いたRAGベースライン
+- Status: Draft
+- Product: `bonsai/paper-digest`
+- Related: [MRD](mrd-paper-explorer.md)
+- Target corpus: user-provided 10 PDFs
+- Initial research focus: AI-generated anime/video production
+- Runtime priority: Kaggle / local Python, free and reproducible
 
-## 1. プロダクト概要
+## 1. Product definition
 
-10本の論文PDFを取り込み、ページ・セクション情報を維持したチャンク索引を作成する。利用者は動的グラフから研究テーマを探索し、自然言語で質問し、回答の根拠を原文のページへたどる。グラフは研究構造を見つける入口、RAGは根拠を確認する手段とする。
+PDF 10本をソースとして取り込み、ページ出典を保ったデータセットを生成する。ユーザーは動的グラフで関係を探索し、RAGで質問し、根拠付きのインサイト候補を記録できる。
 
-## 2. MVPユーザーフロー
+## 2. MVP architecture
 
-1. PDF 10本を入力フォルダへ配置する。
-2. ノートブックを実行し、PDFごとのメタデータ・抽出状態・ページ数を確認する。
-3. ページ対応のテキストを抽出し、意味単位を優先してチャンク化する。
-4. 文献・チャンク・キーワード・研究タスク・評価指標の表を生成する。
-5. Plotlyのグラフでキーワードや論文を選択し、接続先を絞り込む。
-6. グラフで選択したトピックについてRAGに質問する。
-7. 回答の引用をクリックまたは参照情報から開き、論文名・ページ・抜粋を確認する。
-8. 根拠・解釈・不確実性・反証候補を含むインサイトメモを保存する。
+```mermaid
+flowchart TD
+    A[10 source PDFs] --> B[File manifest and SHA-256]
+    B --> C[Page-aware PDF extraction]
+    C --> D[Paper metadata and page chunks]
+    D --> E[Search index]
+    D --> F[Keyword / entity extraction]
+    F --> G[Typed relationship graph]
+    E --> H[RAG question answering]
+    G --> I[Interactive Plotly graph]
+    H --> J[Evidence-linked answer]
+    I --> K[Selected node and related evidence]
+    J --> L[Insight candidate board]
+    K --> L
+    L --> M[Export and evaluation]
+```
 
-## 3. 機能要件
+### Stack
 
-### FR-01 PDF取込
-- 入力PDFごとに安定した `paper_id` を割り当てる。
-- ファイル名、タイトル、著者、年、DOI/arXiv ID/URL（取得可能なもの）、取込状態、ページ数、抽出方法を記録する。
-- PDFごとの成功・失敗を一覧表示し、一部失敗でも他のPDFの処理を継続する。
-- PDFのハッシュ値を記録し、同一ファイルの重複取込を検知する。
+- Python
+- PyMuPDF for PDF text extraction
+- pandas and NumPy for corpus analysis
+- Plotly for interactive graph and charts
+- SQLite FTS5 as a free lexical retrieval baseline
+- Optional local/open model for answer synthesis; retrieval must remain useful without a generation model
+- Kaggle Notebook as a reproducible entry point
 
-### FR-02 ページ対応テキスト抽出
-- 抽出テキストに `paper_id` とページ番号を保持する。
-- テキスト抽出が空・極端に短いページを警告対象にする。
-- OCRは初期版の必須条件にせず、抽出不能PDFを明示する。
-- PDFに存在しないメタデータを推測で補完しない。
+Avoid making a paid API, dedicated GPU, or always-on service mandatory.
 
-### FR-03 チャンク生成
-- 初期版はページと見出しを利用したチャンクを作る。見出しが取れない場合は文字数上限とオーバーラップを使う。
-- チャンクには `chunk_id`、`paper_id`、`page_start`、`page_end`、`section`、`text`、`source_hash` を保存する。
-- 目安は数百語相当の短いチャンクとし、実際の言語・抽出品質を見て調整する。
-- チャンクを原文ページへ追跡できない場合、そのチャンクを引用根拠に使わない。
+## 3. User stories and acceptance criteria
 
-### FR-04 文献・キーワードの構造化
-- pandasで `papers`、`chunks`、`keywords`、`edges`、`insights` を構築する。
-- NumPyでTF-IDF／共起・類似度行列などの数値計算を行う。
-- 初期版は軽量なTF-IDF・キーワード抽出・共起関係を基本とする。埋め込みモデルはオプション。
-- ドメイン分類は `live_action`、`anime_2d`、`animation_3d_cg`、`mixed`、`unknown` とし、分類根拠と確信度を保持する。
-- キーワードは原語と正規化語を保持し、日本語・英語の表記揺れを管理する。
+### US-01 — Register and audit source PDFs
 
-### FR-05 動的グラフ
-- Plotlyでキーワード／論文のインタラクティブなネットワークを表示する。
-- ノードの種類、ラベル、頻度、ドメイン、関連論文数を確認できる。
-- エッジは少なくとも `co_occurrence`、`semantic_similarity`（実装した場合）、`uses_dataset`、`uses_metric`、`cites`（明示的に抽出できた場合）を区別する。
-- ノード選択に応じて関連論文と根拠チャンクの一覧を更新する。
-- 頻度・研究タスク・ドメインで絞り込めるようにする。
-- グラフ上の距離・クラスタは探索補助であり、因果や重要度の証明ではないと明示する。
+As a researcher, I want to confirm which PDFs were loaded and whether each was processed correctly.
 
-### FR-06 RAG質問応答
-- 初期検索はSQLite FTS5の全文検索を使い、APIキー不要で実行できるようにする。
-- 回答には論文タイトル、ページ番号、チャンクID、根拠抜粋を含める。
-- 質問の根拠がコーパスにない場合は、その旨を明確に返す。
-- 検索で取得した根拠と、モデルが行う推論・解釈を分けて表示する。
-- モデルを使った生成回答が利用できない環境でも、検索結果の提示は機能する。
-- グラフ上で選択中のキーワード・論文を検索条件に追加できる。
+Acceptance:
+- Recursively discover PDFs in a configured input folder.
+- Generate a stable content-based paper ID and SHA-256 hash.
+- Record file name, bytes, page count, pages with text, extraction status, and error details.
+- Distinguish at least `success`, `no_text_layer`, `empty_pdf`, and `error`.
+- One corrupt PDF must not abort processing of the remaining files.
+- Do not claim all 10 are successfully processed if any failed.
 
-### FR-07 インサイト候補
-- インサイトを「主張」「根拠論文／ページ」「解釈」「確信度」「反証・限界」「次の検証質問」に分けて保存する。
-- 共通点、対立点、未接続トピック、測定されていない評価項目を候補として提示する。
-- グラフの孤立ノードや頻度の低さだけを根拠に「研究ギャップ」と断定しない。
-- CSVまたはJSONLでエクスポートできる。
+### US-02 — Preserve page-level provenance
 
-### FR-08 再現性・ログ
-- 入力PDFのハッシュ、設定、依存バージョン、実行日時、抽出エラーを記録する。
-- 同じ入力と設定から同じメタデータ・チャンク・共起グラフを再生成できる。
-- 生成AIによる回答はモデル名・設定（取得可能な範囲）と参照チャンクIDをログに残す。
-- PDF本体や全文抽出テキストは、ライセンス確認なしに公開リポジトリへ追加しない。
+As a researcher, I want every search result and answer to point back to its source.
 
-## 4. データモデル（初期案）
+Acceptance:
+- Each chunk has `chunk_id`, `paper_id`, `file_name`, `page_start`, `page_end`, `text`, `source_sha256`, and `extraction_method`.
+- Initial chunking is one non-empty page per chunk; later versions may split long pages but must retain page provenance.
+- Export `papers.csv`, `chunks.jsonl`, and `run-manifest.json`.
+- Record extraction errors and library versions.
 
-### papers
-`paper_id, title, authors, year, doi, arxiv_id, url, domain, domain_rationale, pdf_sha256, page_count, extraction_status, source_filename`
+### US-03 — Compare papers in a structured view
 
-### chunks
-`chunk_id, paper_id, page_start, page_end, section, text, source_hash, chunk_method`
+As a researcher, I want to compare research goals, methods, datasets, metrics, findings, and limitations.
 
-### keywords
-`keyword_id, term, normalized_term, language, category`
+Acceptance:
+- Provide a paper table with title (if extracted or manually supplied), year (if known), domain, method, dataset, metrics, and limitations.
+- Unknown values remain explicitly unknown; do not infer bibliographic facts without evidence.
+- Every extracted field can be reviewed against source pages.
+- Domain labels include `live_action`, `anime_2d`, `animation_3d_cg`, `mixed`, and `unknown`. Domain classification is descriptive, not a quality score.
 
-### edges
-`source_id, target_id, relation_type, weight, evidence_chunk_ids, method`
+### US-04 — Explore a dynamic relationship graph
 
-### insights
-`insight_id, claim, evidence_refs, interpretation, confidence, limitations, counterevidence, next_question, status`
+As a researcher, I want to select a graph node and discover connected papers and evidence.
 
-## 5. 画面・ノートブック構成
+Acceptance:
+- Render an interactive Plotly graph.
+- Node types include paper, keyword/concept, dataset, method, and evaluation metric.
+- Edge types are explicitly typed: `co_occurrence`, `citation`, `semantic_similarity`, `uses_dataset`, `uses_metric`, and `uses_method`.
+- Provide filters for node type, edge type, and paper/domain.
+- Selecting a node shows connected nodes, related papers, and page-level evidence where available.
+- Edge weight and method of calculation are documented.
+- The UI warns that co-occurrence or graph proximity does not prove causality or importance.
+- With no corpus data, show an empty state rather than a fabricated graph.
 
-1. **00 — Setup & Input**：依存関係、入力PDF一覧、実行設定
-2. **01 — Corpus QA**：PDF抽出状況、ページ数、失敗・警告
-3. **02 — Chunk Explorer**：チャンクと出典ページの確認
-4. **03 — Keyword Space**：Plotlyグラフ、フィルター、関連文献
-5. **04 — Ask the Papers**：質問、検索根拠、引用付き回答
-6. **05 — Insight Board**：インサイト候補、反証、次の質問
-7. **06 — Export**：CSV／JSONL／HTMLの出力
+### US-05 — Ask questions using RAG
 
-初期版はKaggle Notebook内で操作できる構成を優先し、独立したWebアプリ化はMVP後に判断する。
+As a researcher, I want to ask questions about the 10 PDFs and receive evidence-backed answers.
 
-## 6. 非機能要件
+Acceptance:
+- Use a retrieval pipeline over page-aware chunks; SQLite FTS5 is the baseline.
+- The retrieval result records chunk IDs and relevance scores.
+- Answer synthesis can be disabled; search results must still work.
+- Each factual answer claim is accompanied by citations containing paper name, page, chunk ID, and a short source excerpt.
+- Clicking a citation navigates to the corresponding source record; if the original PDF is available in the session, provide a way to open it at the relevant page when technically possible.
+- If evidence is missing or weak, state that the current corpus cannot establish the answer.
+- Do not silently answer from general model knowledge as though it came from the PDFs.
+- Distinguish paper-authored claims from system interpretation.
+- Prevent source text from being treated as executable instructions; source text is untrusted evidence, not system instructions.
 
-- Kaggleの一般的なCPU環境で、10本のPDFを処理できるようにする。
-- APIキー・有料API・GPUを基本フローの必須条件にしない。
-- PDF単位の失敗を隔離し、部分的な処理結果を確認できる。
-- すべての回答根拠を元PDF・ページに追跡できる。
-- データ出力はCSV／JSONLなど、他の分析工程でも利用可能な形式とする。
-- 公開するHTMLグラフに論文全文や非公開の抜粋を埋め込まない。
+### US-06 — Discover and curate insight candidates
 
-## 7. 評価計画
+As a researcher, I want the system to propose patterns without pretending that hypotheses are proven.
 
-### 固定評価質問
-最初に10〜20件の質問を作成し、回答の正確性と出典追跡を手作業で評価する。例：
-- 各論文が扱うタスクと評価指標は何か。
-- キャラクター一貫性をどのように定義・測定しているか。
-- 人間評価と自動評価を比較している論文はどれか。
-- ポーズ・動作制御の効果を検証する条件は何か。
-- 論文間で一致する主張と食い違う主張は何か。
-- このコーパスだけでは回答できない問いは何か。
+Candidate categories:
+- Commonality across papers
+- Contradiction or disagreement
+- Method/dataset/metric association
+- Coverage gap within the current corpus
+- Potential next experiment or research question
 
-### 測定項目
-- PDF取込成功率
-- 根拠の正確性（該当ページ・内容の一致）
-- 回答の引用付与率と引用有効率
-- 回答不能時に無理な回答をしない割合
-- グラフから関連文献へ到達できる割合
-- インサイト候補のうち人間が根拠ありと判定した割合
-- 再実行時の出力再現性
+Each insight record contains:
+- `insight_id`
+- `claim`
+- `category`
+- `supporting_citations[]`
+- `counterevidence[]`
+- `interpretation`
+- `confidence` (qualitative with rationale, not a calibrated probability unless calibrated)
+- `limitations`
+- `next_question`
+- `review_status` (`unreviewed`, `accepted_for_followup`, `rejected`, `needs_more_evidence`)
 
-### MVPの合格条件
-- 指定10本すべてについて取込成否と理由が確認できる。
-- 正常に抽出されたチャンクから原文ページまで追跡できる。
-- グラフ操作で関連論文・チャンクが絞り込まれる。
-- RAGが引用付き検索結果を返し、根拠不足を表明できる。
-- 固定評価質問で引用の正確性を手動確認できる。
-- Kaggle上でAPIキーなしの取込・構造化・グラフ生成が再実行できる。
+Acceptance:
+- Every candidate must link to at least one source chunk; cross-paper claims should cite multiple papers where available.
+- The system labels candidates as hypotheses until a human reviews them.
+- Include a way to record counterevidence and reject weak candidates.
+- Do not claim a gap exists in the entire field solely because the 10-paper corpus does not cover it.
 
-## 8. 実装フェーズ
+### US-07 — Reproduce and export
 
-### Phase 0 — Corpus audit
-PDF 10本のファイル名、出典、ライセンス、ハッシュ、抽出可能性を確認する。
+Acceptance:
+- Save run timestamp, input hashes, dependency versions, extraction status, and configuration.
+- Export the paper table, chunks, graph edges, citations, and insight board to CSV/JSONL.
+- Allow exporting the interactive graph as HTML when supported by the environment.
+- Document how to rerun the notebook.
+- Do not commit restricted PDFs or extracted full text without checking their license.
 
-### Phase 1 — PDF to chunks
-ページ対応抽出、チャンク生成、メタデータCSV／JSONLを作る。
+## 4. Data contracts
 
-### Phase 2 — Keyword graph
-pandas・NumPyで集計し、Plotlyグラフと関連文献一覧を作る。
+### papers.csv
 
-### Phase 3 — RAG baseline
-SQLite FTS5で検索し、根拠ページ付きの回答プロンプト／検索結果を提供する。
+Required fields:
+- `paper_id`
+- `file_name`
+- `sha256`
+- `file_bytes`
+- `page_count`
+- `pages_with_text`
+- `extraction_status`
+- `error`
 
-### Phase 4 — Insights & evaluation
-固定質問、引用確認、インサイトボード、CSV／JSONLエクスポートを実装する。
+Recommended enrichment fields:
+- `title`
+- `authors`
+- `year`
+- `domain`
+- `research_question`
+- `method`
+- `datasets`
+- `metrics`
+- `limitations`
+- `metadata_source`
+- `metadata_review_status`
 
-### Phase 5 — Optional semantic retrieval
-必要性が評価で確認できた場合のみ、ローカル埋め込み・ベクトル検索を追加して全文検索と比較する。
+### chunks.jsonl
 
-## 9. 未決事項
+Required fields:
+- `chunk_id`
+- `paper_id`
+- `file_name`
+- `page_start`
+- `page_end`
+- `text`
+- `text_chars`
+- `source_sha256`
+- `extraction_method`
 
-- 10本のPDFの具体的なファイルとライセンス
-- Kaggle Datasetへの登録方法（非公開データセットを含む）
-- RAG回答生成に使うモデルと利用可能な推論環境
-- PDF抽出ライブラリの最終選定
-- ノートブック外の動的グラフ共有が必要か
-- ドメイン分類を手動、ルールベース、LLM補助のどこまで自動化するか
+### keyword_edges.csv
 
-これらは最初のコーパス監査後に確定する。
+Required fields:
+- `source_id`
+- `target_id`
+- `edge_type`
+- `weight`
+- `weight_method`
+- `supporting_paper_ids`
+- `supporting_chunk_ids`
+
+### insights.jsonl
+
+Use the US-06 schema. Keep source citations as structured fields rather than embedding them only in prose.
+
+## 5. Notebook layout
+
+1. `00 Setup & Input` — dependency versions, PDF folder, configuration
+2. `01 Corpus QA` — manifest, hashes, extraction states
+3. `02 Page-aware Chunks` — sample and inspect extracted text
+4. `03 Paper Comparison` — structured metadata table and unknowns
+5. `04 Dynamic Keyword Space` — Plotly nodes, typed edges, filters
+6. `05 Ask the Papers` — retrieval, evidence, answer/no-answer behavior
+7. `06 Insight Board` — candidate patterns, counterevidence, review state
+8. `07 Evaluation & Export` — fixed questions, metrics, reproducibility manifest
+
+## 6. Evaluation protocol
+
+Create a small, fixed question set before tuning retrieval:
+- Questions answerable by one paper
+- Cross-paper comparison questions
+- Questions whose answer is not in the corpus
+- Questions about method, dataset, metric, and limitations
+- At least a few questions where the source wording is ambiguous
+
+Evaluate:
+- Citation correctness: does the cited page actually support the claim?
+- Retrieval recall at k on manually labeled relevant chunks
+- Answer faithfulness to retrieved evidence
+- Appropriate abstention when evidence is absent
+- Navigation from graph node to relevant paper/chunk
+- Human review outcome for proposed insights
+
+Report sample size and limitations. Do not present small-sample scores as broad guarantees.
+
+## 7. Implementation phases
+
+### Phase 1 — Source ingest and QA
+- Confirm the 10 PDFs and permitted usage.
+- Run `scripts/literature/ingest_pdfs.py`.
+- Inspect text quality, especially tables, equations, and multi-column pages.
+- Add a clear OCR-needed status; OCR itself can be a later phase.
+
+### Phase 2 — Structured paper and chunk data
+- Validate schemas and stable identifiers.
+- Add metadata manually or with assisted extraction plus human verification.
+- Build SQLite FTS5 index and search interface.
+
+### Phase 3 — Graph and visualization
+- Extract candidate keywords/entities with traceable provenance.
+- Generate typed edges with documented methods.
+- Render Plotly graph and node detail panel.
+- Verify empty states and graph-to-source navigation.
+
+### Phase 4 — RAG and citations
+- Retrieve chunks from SQLite FTS5.
+- Add optional reranking or semantic retrieval only after baseline evaluation.
+- Generate answers from retrieved evidence only, with citations and abstention.
+- Manually audit the fixed question set.
+
+### Phase 5 — Insight review and export
+- Generate candidate commonalities, disagreements, and corpus gaps.
+- Attach supporting and counterevidence.
+- Add human review states and export formats.
+- Record reproducibility metadata.
+
+## 8. Error handling and security
+
+- Missing input directory: actionable error; do not create an empty success report.
+- No PDFs: report zero files and stop analysis with an explicit empty state.
+- Corrupt/locked PDF: record per-file failure and continue.
+- Scanned PDF: mark OCR-needed/no text layer; do not fabricate text.
+- Prompt injection in source documents: treat as quoted source content, never as instructions.
+- Privacy/licensing: do not upload private or restricted papers to third-party services without authorization.
+- Large files: process sequentially and avoid loading all raw PDF bytes into memory.
+
+## 9. MVP definition of done
+
+- Ten source files are accounted for in the manifest.
+- Each file has an honest extraction status.
+- Search results and chunks preserve source-page provenance.
+- Dynamic graph has typed edges and links to relevant evidence.
+- RAG can answer from retrieved chunks with citations and abstain when unsupported.
+- Insight candidates include counterevidence/limitations and human review state.
+- The notebook runs from a clean environment using documented steps.
+- Evaluation results are based on actual test runs and clearly labeled as such.
+
+## 10. Open decisions
+
+- Exact ten PDFs and their usage rights
+- How source PDFs are supplied to Kaggle
+- Metadata enrichment strategy
+- Local/hosted generation model choice
+- Whether graph export should be a standalone HTML artifact in the MVP
+- OCR and semantic retrieval priority after the lexical baseline
