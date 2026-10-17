@@ -1,0 +1,108 @@
+name: Digest Catalog
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "data/sources/**"
+      - ".github/workflows/wf.yml"
+  schedule:
+    - cron: "17 0 * * 1"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: digest-catalog-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-catalog:
+    name: Validate digest sources
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate source files and build catalog report
+        shell: python
+        run: |
+          import json
+          import os
+          from collections import Counter
+          from pathlib import Path
+
+          root = Path(".")
+          jsonl_path = root / "data/sources/prompt-only-llm-evaluation-list.jsonl"
+          required_paths = [
+              root / "data/sources/paper-list.md",
+              root / "data/sources/prompt-only-llm-evaluation-list.md",
+              root / "data/sources/prompt-only-llm-evaluation.md",
+              root / "data/sources/r2v-papers.yaml",
+              jsonl_path,
+          ]
+
+          missing = [str(path) for path in required_paths if not path.is_file()]
+          if missing:
+              raise SystemExit("Missing required source files:\n- " + "\n- ".join(missing))
+
+          records = []
+          errors = []
+          for line_number, line in enumerate(jsonl_path.read_text(encoding="utf-8").splitlines(), 1):
+              if not line.strip():
+                  continue
+              try:
+                  item = json.loads(line)
+              except json.JSONDecodeError as exc:
+                  errors.append(f"{jsonl_path}:{line_number}: invalid JSON: {exc}")
+                  continue
+              if not isinstance(item, dict):
+                  errors.append(f"{jsonl_path}:{line_number}: each JSONL row must be an object")
+                  continue
+              for key in ("id", "record_type", "title", "status"):
+                  if not item.get(key):
+                      errors.append(f"{jsonl_path}:{line_number}: missing required field '{key}'")
+              records.append(item)
+
+          ids = [item.get("id") for item in records]
+          duplicates = sorted({value for value in ids if value and ids.count(value) > 1})
+          if duplicates:
+              errors.append("Duplicate record IDs: " + ", ".join(duplicates))
+          if errors:
+              raise SystemExit("\n".join(errors))
+
+          types = Counter(item.get("record_type", "unspecified") for item in records)
+          statuses = Counter(item.get("status", "unspecified") for item in records)
+          report = [
+              "# Digest catalog validation",
+              "",
+              f"- Commit: `{os.environ.get('GITHUB_SHA', 'local')}`",
+              f"- JSONL source: `{jsonl_path}`",
+              f"- Valid records: **{len(records)}**",
+              "- Validation: **passed**",
+              "",
+              "## Records by type",
+              "",
+          ]
+          report.extend(f"- {name}: {count}" for name, count in sorted(types.items()))
+          report += ["", "## Records by status", ""]
+          report.extend(f"- {name}: {count}" for name, count in sorted(statuses.items()))
+          report += [
+              "",
+              "> This workflow validates catalog structure only. It does not claim that sources were read, facts were verified, or experiments were reproduced.",
+              "",
+          ]
+
+          out = Path("digest-report.md")
+          out.write_text("\n".join(report), encoding="utf-8")
+          print("\n".join(report))
+
+      - name: Upload digest validation report
+        uses: actions/upload-artifact@v4
+        with:
+          name: digest-catalog-report
+          path: digest-report.md
+          if-no-files-found: error
+          retention-days: 14
