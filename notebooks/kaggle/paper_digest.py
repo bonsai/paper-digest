@@ -8,8 +8,8 @@ Paper Digest MVP — Kaggle one-file pipeline
 - source-grounded RAG retrieval/answers with paper + page citations
 - reproducibility manifest and CSV/JSONL artifacts
 
-Kaggle use:
-1. Add PDFs as a Kaggle Dataset/input, or place them under /kaggle/working/pdfs.
+Colab/Kaggle use:
+1. Configure PAPER_DIGEST_WORK_DIR and optional input/output environment variables.
 2. Run this file.
 3. Set QUESTIONS below, then rerun to produce RAG answers.
 No paid API, GPU, or external LLM is required. Answers are evidence excerpts,
@@ -46,9 +46,15 @@ PDF_URLS = [
     {"url": "https://arxiv.org/pdf/2609.22069", "filename": "omnivbench-2026.pdf"},
     {"url": "https://arxiv.org/pdf/2505.11425", "filename": "face-consistency-benchmark-2025.pdf"},
 ]
-DOWNLOAD_DIR = Path("/kaggle/working/paper-digest-pdfs")
-PDF_DIRS = [Path("/kaggle/input"), DOWNLOAD_DIR, Path("/kaggle/working/pdfs"), Path("./pdfs")]
-OUTPUT_DIR = Path("/kaggle/working/paper-digest-output")
+WORK_DIR = Path(os.environ.get("PAPER_DIGEST_WORK_DIR", "/kaggle/working"))
+DOWNLOAD_DIR = Path(os.environ.get("PAPER_DIGEST_DOWNLOAD_DIR", str(WORK_DIR / "paper-digest-pdfs")))
+PDF_DIRS = [
+    Path(os.environ.get("PAPER_DIGEST_INPUT_DIR", "/kaggle/input")),
+    DOWNLOAD_DIR,
+    WORK_DIR / "pdfs",
+    Path("./pdfs"),
+]
+OUTPUT_DIR = Path(os.environ.get("PAPER_DIGEST_OUTPUT_DIR", str(WORK_DIR / "paper-digest-output")))
 # Put questions here. Example:
 # QUESTIONS = ["What methods are compared?", "What limitations are reported?"]
 QUESTIONS = []
