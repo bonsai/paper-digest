@@ -11,6 +11,7 @@ The goal is to connect source evidence to hypotheses, experiments, architecture 
 - [Kaggle notebook scaffold](notebooks/kaggle/paper-digest-mvp.ipynb)
 - [Research source list: papers, software-factory articles, and implementation cases](data/sources/paper-list.md)
 - [Separate bibliography: prompt-only LLM methods and evaluation](data/sources/prompt-only-llm-evaluation-list.md)
+- [Machine-readable JSONL bibliography: prompt-only LLM methods and evaluation](data/sources/prompt-only-llm-evaluation-list.jsonl)
 - [Prompt-only LLM research map and experiment protocol](data/sources/prompt-only-llm-evaluation.md)
 - [Machine-readable source manifest](data/sources/r2v-papers.yaml)
 
