@@ -1,15 +1,15 @@
-# Paper Digest
+# Research & Engineering Knowledge Factory
 
-A reproducible, source-grounded workspace for exploring research papers—starting with AI-generated anime/video production.
+A reproducible, source-grounded workspace for turning papers, engineering articles, official blogs, and open-source implementations into reusable software-engineering knowledge.
 
-The first milestone is intentionally small: ingest a user-provided corpus of around 10 PDFs, preserve page-level provenance, explore paper/keyword relationships, and test whether candidate insights are supported by evidence. This is a research tool, not an automatic truth machine.
+The goal is to connect source evidence to hypotheses, experiments, architecture decisions, GitHub Issues, and continuous improvement. Four-panel comics are an optional publishing format, not the product's main purpose.
 
 ## Project documents
 
 - [Market Requirements Document](docs/mrd-paper-explorer.md)
 - [Product Requirements Document](docs/prd-paper-explorer.md)
 - [Kaggle notebook scaffold](notebooks/kaggle/paper-digest-mvp.ipynb)
-- [Paper candidate list: AI video, Toyota/organization, human-AI](data/sources/paper-list.md)
+- [Research source list: papers, software-factory articles, and implementation cases](data/sources/paper-list.md)
 - [Machine-readable source manifest](data/sources/r2v-papers.yaml)
 
 ## MVP workflow
@@ -23,7 +23,7 @@ The first milestone is intentionally small: ingest a user-provided corpus of aro
 
 ## Current status
 
-This repository contains planning documents and a notebook skeleton. The ingestion, graph, retrieval, and evaluation pipeline is not implemented yet. Do not treat example outputs or planned metrics as measured results.
+This repository currently contains planning documents, a source-candidate list, and notebook scaffolding. The ingestion, graph, retrieval, and evaluation pipeline is not implemented yet. Do not treat example outputs or planned metrics as measured results.
 
 ## Data and provenance principles
 
@@ -42,3 +42,23 @@ Suggested libraries: pandas, NumPy, Plotly, PyMuPDF (fitz), and SQLite FTS5. Pin
 ## Scope note
 
 The product is for research exploration. The initial corpus and any findings must not be presented as representative of the entire field without a documented sampling and search protocol.
+
+
+## Knowledge-to-engineering loop
+
+1. Register a paper, article, documentation page, or repository with source type and usage status.
+2. Extract claims and evidence pointers; distinguish author claims, observed facts, interpretation, and unknowns.
+3. Turn useful findings into hypotheses or design propositions.
+4. Test them through a JEV-style experiment/implementation loop; record metrics and limitations.
+5. Export reviewed results as PRDs, ADRs, GitHub Issues, evaluation plans, or articles.
+6. Keep generated changes reviewable; do not let a summary alone authorize implementation or merge.
+
+## Initial article sources
+
+- [GitHub Agentic Workflows](https://github.blog/ai-and-ml/automate-repository-tasks-with-github-agentic-workflows/)
+- [Microsoft: Transform software development through an agentic platform](https://developer.microsoft.com/blog/learn-from-microsoft-transform-software-development-through-an-agentic-platform/)
+- [Elastic AI Software Factory: Welcome to the Agent Factory](https://elastic.github.io/ai-github-actions/blog/welcome-to-the-agent-factory/)
+- [Martin Fowler: Humans and Agents in Software Engineering Loops](https://martinfowler.com/articles/exploring-gen-ai/humans-and-agents.html)
+- [Microsoft Research: Why AI Agents Still Need You](https://www.microsoft.com/en-us/research/publication/sharp-tools-how-developers-wield-agentic-ai-in-real-software-engineering-tasks/?lang=ja)
+
+The linked articles are research leads, not independent validation of vendor claims. Verify current status and implementation details before adopting a pattern.
