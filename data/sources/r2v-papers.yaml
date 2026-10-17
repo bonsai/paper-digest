@@ -1,0 +1,109 @@
+schema_version: "1.0"
+source_repository: "https://github.com/bonsai/r2v"
+source_files:
+  seed_catalog: "papers.yaml"
+  explicit_pdf_manifest: "rag/papers.yml"
+target_pdf_count: 10
+status: "incomplete_source_selection"
+policy:
+  download_mode: explicit_opt_in
+  commit_pdf_files: false
+  commit_extracted_full_text: false
+  preserve_page_citations: true
+  verify_license_before_redistribution: true
+papers:
+  - id: saber-2025
+    title: "Scaling Zero-Shot Reference-to-Video Generation"
+    year: 2025
+    source_url: "https://arxiv.org/abs/2512.06905"
+    pdf_url: "https://arxiv.org/pdf/2512.06905"
+    arxiv_id: "2512.06905"
+    source_manifest: "bonsai/r2v:rag/papers.yml"
+    local_path: "data/pdfs/2512.06905.pdf"
+    license_status: "needs_review"
+    download_status: "not_downloaded"
+  - id: refalign-2026
+    title: "RefAlign: Representation Alignment for Reference-to-Video Generation"
+    year: 2026
+    source_url: "https://arxiv.org/abs/2603.25743"
+    pdf_url: "https://arxiv.org/pdf/2603.25743"
+    arxiv_id: "2603.25743"
+    source_manifest: "bonsai/r2v:rag/papers.yml"
+    local_path: "data/pdfs/2603.25743.pdf"
+    license_status: "needs_review"
+    download_status: "not_downloaded"
+  - id: omnivbench-2026
+    title: "OmniVBench: A Benchmark and Large-Scale Dataset for Omni Reference-to-Video Generation"
+    year: 2026
+    source_url: "https://arxiv.org/abs/2609.22069"
+    pdf_url: "https://arxiv.org/pdf/2609.22069"
+    arxiv_id: "2609.22069"
+    source_manifest: "bonsai/r2v:rag/papers.yml"
+    local_path: "data/pdfs/2609.22069.pdf"
+    license_status: "needs_review"
+    download_status: "not_downloaded"
+  - id: vbench-2024
+    title: "VBench: Comprehensive Benchmark Suite for Video Generative Models"
+    year: 2024
+    source_url: "https://openaccess.thecvf.com/content/CVPR2024/html/Huang_VBench_Comprehensive_Benchmark_Suite_for_Video_Generative_Models_CVPR_2024_paper.html"
+    pdf_url: null
+    arxiv_id: null
+    source_manifest: "bonsai/r2v:papers.yaml"
+    local_path: null
+    license_status: "needs_review"
+    download_status: "unresolved_pdf_url"
+  - id: evalcrafter-2024
+    title: "EvalCrafter"
+    year: 2024
+    source_url: "https://evalcrafter.github.io/"
+    pdf_url: null
+    arxiv_id: null
+    source_manifest: "bonsai/r2v:papers.yaml"
+    local_path: null
+    license_status: "needs_review"
+    download_status: "unresolved_pdf_url"
+  - id: videobench-2025
+    title: "Video-Bench"
+    year: 2025
+    source_url: "https://mlanthology.org/cvpr/2025/han2025cvpr-videobench/"
+    pdf_url: null
+    arxiv_id: null
+    source_manifest: "bonsai/r2v:papers.yaml"
+    local_path: null
+    license_status: "needs_review"
+    download_status: "unresolved_pdf_url"
+  - id: face-consistency-2025
+    title: "Face Consistency Benchmark"
+    year: 2025
+    source_url: "https://arxiv.org/abs/2505.11425"
+    pdf_url: "https://arxiv.org/pdf/2505.11425"
+    arxiv_id: "2505.11425"
+    source_manifest: "bonsai/r2v:papers.yaml"
+    local_path: "data/pdfs/2505.11425.pdf"
+    license_status: "needs_review"
+    download_status: "not_downloaded"
+  - id: opens2v-nexus-2025
+    title: "OpenS2V-Nexus"
+    year: 2025
+    source_url: "https://proceedings.neurips.cc/paper_files/paper/2025/hash/dae77d03bd51a5acfe8519848a3af6c9-Abstract-Datasets_and_Benchmarks_Track.html"
+    pdf_url: null
+    arxiv_id: null
+    source_manifest: "bonsai/r2v:papers.yaml"
+    local_path: null
+    license_status: "needs_review"
+    download_status: "unresolved_pdf_url"
+  - id: controlnext-2024
+    title: "ControlNeXt"
+    year: 2024
+    source_url: "https://arxiv.org/abs/2408.06070"
+    pdf_url: "https://arxiv.org/pdf/2408.06070"
+    arxiv_id: "2408.06070"
+    source_manifest: "bonsai/r2v:papers.yaml"
+    local_path: "data/pdfs/2408.06070.pdf"
+    license_status: "needs_review"
+    download_status: "not_downloaded"
+notes:
+  - "The source catalog currently has 8 records; the 10-PDF target is not yet satisfied."
+  - "Only direct PDF URLs verified from known arXiv identifiers are populated for the arXiv records."
+  - "Publisher/website records without a verified direct PDF URL remain unresolved; do not guess URLs."
+  - "Verify source metadata and current licenses before redistribution."
