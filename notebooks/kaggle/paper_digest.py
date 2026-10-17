@@ -25,12 +25,29 @@ import re
 import sys
 import subprocess
 import importlib.util
+import time
+import urllib.error
+import urllib.request
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
 # ---------- User configuration ----------
-PDF_DIRS = [Path("/kaggle/input"), Path("/kaggle/working/pdfs"), Path("./pdfs")]
+# Add direct PDF URLs here. Each item may optionally specify a filename.
+# Use direct PDF endpoints; this script does not crawl arbitrary web pages.
+PDF_URLS = [
+    {"url": "https://arxiv.org/pdf/2407.12994", "filename": "prompt-engineering-survey-vatsal-dubey-2024.pdf"},
+    {"url": "https://arxiv.org/pdf/2402.07927", "filename": "prompt-engineering-survey-sahoo-2024.pdf"},
+    {"url": "https://arxiv.org/pdf/2201.11903", "filename": "chain-of-thought-prompting-2022.pdf"},
+    {"url": "https://arxiv.org/pdf/2306.04528", "filename": "promptrobust-2023.pdf"},
+    {"url": "https://arxiv.org/pdf/2306.05685", "filename": "mt-bench-chatbot-arena-2023.pdf"},
+    {"url": "https://arxiv.org/pdf/2512.06905", "filename": "scaling-zero-shot-reference-to-video-2025.pdf"},
+    {"url": "https://arxiv.org/pdf/2603.25743", "filename": "refalign-reference-to-video-2026.pdf"},
+    {"url": "https://arxiv.org/pdf/2609.22069", "filename": "omnivbench-2026.pdf"},
+    {"url": "https://arxiv.org/pdf/2505.11425", "filename": "face-consistency-benchmark-2025.pdf"},
+]
+DOWNLOAD_DIR = Path("/kaggle/working/paper-digest-pdfs")
+PDF_DIRS = [Path("/kaggle/input"), DOWNLOAD_DIR, Path("/kaggle/working/pdfs"), Path("./pdfs")]
 OUTPUT_DIR = Path("/kaggle/working/paper-digest-output")
 # Put questions here. Example:
 # QUESTIONS = ["What methods are compared?", "What limitations are reported?"]
@@ -76,6 +93,69 @@ def sha256_file(path: Path) -> str:
 def safe_id(text: str) -> str:
     value = re.sub(r"[^a-zA-Z0-9._-]+", "-", text.strip()).strip("-")
     return value[:100] or "paper"
+
+
+def download_pdf_urls() -> list[dict]:
+    """Download explicitly configured PDF URLs, with caching and per-URL error records."""
+    DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
+    results = []
+    for item in PDF_URLS:
+        if isinstance(item, str):
+            url = item.strip()
+            requested_name = ""
+        else:
+            url = str(item.get("url", "")).strip()
+            requested_name = str(item.get("filename", "")).strip()
+        if not url:
+            continue
+        if not url.lower().startswith("https://"):
+            results.append({"url": url, "status": "rejected", "error": "Only HTTPS URLs are allowed"})
+            print(f"[URL] Rejected non-HTTPS URL: {url}")
+            continue
+        filename = requested_name or Path(url.split("?", 1)[0]).name
+        if not filename.lower().endswith(".pdf"):
+            filename = (Path(filename).stem or "downloaded-paper") + ".pdf"
+        filename = safe_id(Path(filename).stem) + ".pdf"
+        destination = DOWNLOAD_DIR / filename
+        if destination.exists() and destination.stat().st_size > 1024:
+            try:
+                with destination.open("rb") as stream:
+                    is_pdf = stream.read(5) == b"%PDF-"
+                if is_pdf:
+                    results.append({"url": url, "filename": filename, "status": "cached",
+                                    "bytes": destination.stat().st_size})
+                    print(f"[URL] Cached: {filename}")
+                    continue
+            except OSError:
+                pass
+        request = urllib.request.Request(
+            url,
+            headers={"User-Agent": "paper-digest-kaggle/1.0 (research ingestion)"},
+        )
+        try:
+            with urllib.request.urlopen(request, timeout=45) as response:
+                final_url = response.geturl()
+                if not final_url.lower().startswith("https://"):
+                    raise ValueError("Redirect ended at a non-HTTPS URL")
+                payload = response.read()
+                content_type = response.headers.get("Content-Type", "")
+            if len(payload) < 1024 or not payload.startswith(b"%PDF-"):
+                raise ValueError(
+                    f"Response is not a valid PDF (Content-Type={content_type!r}, bytes={len(payload)})"
+                )
+            temporary = destination.with_suffix(".pdf.part")
+            temporary.write_bytes(payload)
+            temporary.replace(destination)
+            results.append({"url": url, "final_url": final_url, "filename": filename,
+                            "status": "downloaded", "bytes": len(payload),
+                            "sha256": hashlib.sha256(payload).hexdigest()})
+            print(f"[URL] Downloaded: {filename} ({len(payload):,} bytes)")
+            time.sleep(0.2)
+        except Exception as exc:
+            results.append({"url": url, "filename": filename, "status": "error",
+                            "error": f"{type(exc).__name__}: {exc}"})
+            print(f"[URL] Failed: {url} — {exc}")
+    return results
 
 
 def find_pdfs() -> list[Path]:
@@ -309,8 +389,10 @@ def write_jsonl(path: Path, rows: list[dict]) -> None:
 
 def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    download_results = download_pdf_urls()
+    write_jsonl(OUTPUT_DIR / "download-results.jsonl", download_results)
     pdf_paths = find_pdfs()
-    print(f"Found {len(pdf_paths)} PDF(s). Output: {OUTPUT_DIR}")
+    print(f"Found {len(pdf_paths)} PDF(s) after URL downloads. Output: {OUTPUT_DIR}")
     papers, chunks, errors = extract_pdfs(pdf_paths)
 
     pd.DataFrame(papers).to_csv(OUTPUT_DIR / "papers.csv", index=False)
@@ -332,6 +414,10 @@ def main() -> None:
         "created_at_utc": datetime.now(timezone.utc).isoformat(),
         "python_version": sys.version,
         "input_pdf_count": len(pdf_paths),
+        "configured_pdf_url_count": len(PDF_URLS),
+        "downloaded_pdf_url_count": sum(1 for item in download_results if item["status"] == "downloaded"),
+        "cached_pdf_url_count": sum(1 for item in download_results if item["status"] == "cached"),
+        "failed_pdf_url_count": sum(1 for item in download_results if item["status"] in {"error", "rejected"}),
         "paper_count": len(papers),
         "page_aware_chunk_count": len(chunks),
         "keyword_row_count": len(keyword_rows),
@@ -359,6 +445,9 @@ def main() -> None:
     print("\n=== PAPER DIGEST COMPLETE ===")
     print(f"Papers: {len(papers)} | chunks: {len(chunks)} | keywords: {len(keyword_rows)}")
     print(f"Graph: {graph_summary['nodes']} nodes / {graph_summary['edges']} edges")
+    print(f"URL downloads: {sum(1 for item in download_results if item['status'] == 'downloaded')} downloaded, "
+          f"{sum(1 for item in download_results if item['status'] == 'cached')} cached, "
+          f"{sum(1 for item in download_results if item['status'] in {'error', 'rejected'})} failed")
     print("Artifacts:")
     for path in sorted(OUTPUT_DIR.iterdir()):
         print(f" - {path.name} ({path.stat().st_size:,} bytes)")
