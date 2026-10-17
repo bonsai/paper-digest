@@ -26,7 +26,7 @@ The goal is to connect source evidence to hypotheses, experiments, architecture 
 
 ## Current status
 
-This repository currently contains planning documents, a source-candidate list, and notebook scaffolding. The ingestion, graph, retrieval, and evaluation pipeline is not implemented yet. Do not treat example outputs or planned metrics as measured results.
+The single-file Kaggle pipeline is implemented at [`notebooks/kaggle/paper_digest.py`](notebooks/kaggle/paper_digest.py). It downloads configured PDF URLs, extracts page-aware text, computes TF-IDF keywords, builds a paper-keyword graph, and retrieves source excerpts for configured questions. Its RAG output is retrieval with citations, not an LLM-synthesized answer. Results are generated at runtime; do not treat example outputs or planned metrics as measured results.
 
 ## Data and provenance principles
 
@@ -65,3 +65,34 @@ The product is for research exploration. The initial corpus and any findings mus
 - [Microsoft Research: Why AI Agents Still Need You](https://www.microsoft.com/en-us/research/publication/sharp-tools-how-developers-wield-agentic-ai-in-real-software-engineering-tasks/?lang=ja)
 
 The linked articles are research leads, not independent validation of vendor claims. Verify current status and implementation details before adopting a pattern.
+
+
+## GitHub Actions → Kaggle CLI automation
+
+The `.github/workflows/kaggle-paper-digest.yml` workflow submits the single-file pipeline to Kaggle when relevant files are pushed to `main`, waits for the kernel run, downloads its outputs, validates the run manifest, and uploads the results as a GitHub Actions artifact.
+
+### One-time setup
+
+1. In Kaggle, create an API token for the account that should own the kernel.
+2. In the GitHub repository, open **Settings → Secrets and variables → Actions → New repository secret**.
+3. Add these repository secrets:
+   - `KAGGLE_USERNAME`: the Kaggle account username (not an email address).
+   - `KAGGLE_KEY`: the API key from the Kaggle token.
+4. Ensure the Kaggle account is allowed to run kernels and has accepted any applicable terms for the source material.
+
+The workflow writes credentials to the runner's temporary `~/.kaggle/kaggle.json` with owner-only file permissions. Credentials are not committed to the repository or included in kernel metadata. The kernel is configured as private and internet-enabled because the script downloads configured PDF URLs. The Kaggle account's kernel slug is `paper-digest`.
+
+### Trigger and outputs
+
+- Automatic trigger: pushes to `main` that change `notebooks/kaggle/paper_digest.py`, `data/sources/**`, or the workflow itself.
+- Manual trigger: **Actions → Run Paper Digest on Kaggle → Run workflow**.
+- Output: open the completed GitHub Actions run and download the `paper-digest-<run number>` artifact. It contains the files returned by Kaggle, including the manifest, paper/chunk data, keyword data, graph, and download/extraction logs.
+- The Kaggle kernel is updated and run on each trigger. Concurrent runs in this workflow are not cancelled to avoid interrupting an in-flight Kaggle run.
+
+### Security and operational notes
+
+- Never place Kaggle API keys in source files, kernel metadata, issue text, or logs. Rotate the key if it is exposed.
+- This workflow requires both GitHub Actions to be enabled and valid Kaggle API credentials stored as repository secrets.
+- Kaggle's internet setting must remain enabled for URL-based PDF ingestion. A failed URL is logged by the Python pipeline; the workflow fails if the run produces no papers or no extracted text chunks.
+- PDF availability, licenses, and redistribution rights are not verified by the workflow. Keep copyrighted PDFs out of the repository unless redistribution is permitted.
+- Kaggle runs and output downloads have platform limits; the workflow waits up to 45 minutes for a run to finish and stores GitHub artifacts for 14 days.
