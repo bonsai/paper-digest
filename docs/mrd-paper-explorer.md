@@ -1,14 +1,14 @@
-# MRD — Paper Digest: 10本の論文から知識空間とインサイトを発見する
+# MRD — Research & Engineering Knowledge Factory
 
 - Status: Draft
 - Product: `bonsai/paper-digest`
 - Version: 0.2
-- Primary audience: AI・動画生成・経営学・組織論を、根拠付きで理解・説明したい読者、研究者、制作ワークフロー設計者
-- Scope: ユーザーが指定する10本のPDFを対象とする。初期コーパスはAI動画生成を起点に、経営学・組織論・人間とAIの協働へ広げる。
+- Primary audience: AI開発者、ソフトウェアファクトリー設計者、研究者、プロジェクト運営者
+- Scope: 論文・技術記事・ブログ・OSSリポジトリ・実践事例を横断し、知識を再利用可能な開発成果物へ変換する。4コマ漫画は任意の出力形式。
 
 ## 1. ビジョン
 
-10本の論文PDFを単に要約するのではなく、原文を根拠として、質問し、関係をたどり、論文間の共通点・相違点・未検証の仮説を発見できる動的な研究環境を作る。
+論文や技術記事を単に要約するのではなく、根拠を保持したまま知識を比較・再構成し、PRD、ADR、GitHub Issue、実験計画、技術記事などへ変換するソフトウェアファクトリーを作る。研究知識をJEVの仮説・実験・評価・改善ループにつなぎ、学びを次の実装へ戻す。
 
 **PDFが一次情報、チャンク・グラフ・要約・インサイトはすべて派生物**として扱う。すべての重要な主張は、元論文・ページ・該当箇所まで戻れること。
 
@@ -128,3 +128,57 @@ Kaggle is the experimental environment for CPU-friendly baseline ML on the small
 4. **Human-in-the-loop:** label corrections become the training/evaluation dataset; model outputs are suggestions, not ground truth.
 
 Ten papers are too few to justify a reliable supervised model from paper count alone. Keywording should begin with unsupervised/lexical baselines. Intent classification requires a separately maintained, manually reviewed query-label dataset and must report the small-sample limitation. Never manufacture evaluation scores or treat synthetic examples as real user behavior.
+
+
+## 11. Software factory and article corpus extension (v0.4)
+
+### Product positioning
+
+This project is a research-to-engineering knowledge factory, not a paper-summary or comic-generation product. Four-panel comics and other accessible explainers are optional publication formats. The primary outcome is reusable, traceable knowledge that can inform software design, implementation, evaluation, and process improvement.
+
+### Supported source types
+
+- Academic papers and preprints
+- Engineering articles, technical blogs, and design notes
+- Official engineering blogs and product documentation
+- Open-source repositories, READMEs, ADRs, and workflow examples
+- Case studies about software factories, agent factories, continuous engineering, and organizational learning
+
+Each source record must include a source type, canonical URL, publication/update date when available, author or publisher, access status, license/usage notes, claims, evidence pointers, and review state. A web article is not automatically peer-reviewed evidence. Keep author claims, independently supported facts, project interpretation, and unverified claims distinct.
+
+### Software factory themes
+
+1. Spec-driven development: turning goals into requirements, acceptance criteria, and implementation plans.
+2. Agentic software engineering: role-scoped agents, task orchestration, context handoff, and human review.
+3. GitHub-native automation: issue triage, documentation maintenance, tests, CI failure investigation, and draft pull requests.
+4. Continuous quality: deterministic CI/CD plus agent-assisted work, security boundaries, observability, and evaluation.
+5. Knowledge reuse: reusable templates, repository conventions, ADRs, catalogues, and cross-repository learning.
+6. Organizational learning: small experiments, psychological safety, feedback, and continuous improvement.
+
+### JEV connection
+
+Treat JEV as the user's own experiment/development loop; do not expand the acronym without an explicit definition. For each useful source, capture:
+- hypothesis or design proposition
+- experiment or implementation to try
+- expected observable outcome
+- metric or review method
+- result and limitations
+- decision: adopt, adapt, reject, or investigate further
+
+A source should not be considered validated merely because it was summarized. Record the link from source → hypothesis → experiment → evidence → decision.
+
+### Output artifacts
+
+- PRD/MRD and acceptance criteria
+- ADRs and architecture diagrams (Mermaid/PlantUML)
+- GitHub Issues and implementation checklists
+- Experiment plans, evaluation rubrics, and result summaries
+- Engineering articles, explainers, and optional comics
+- Structured JSONL/YAML catalogues for reuse across repositories
+
+### Success criteria additions
+
+- Every extracted claim links to a source URL and, for PDFs, page/chunk evidence where available.
+- Articles and peer-reviewed papers are distinguishable in search results and exports.
+- At least one source can be traced through a hypothesis or design proposition to a recorded experiment/decision.
+- Generated artifacts remain drafts until human review; source collection never automatically authorizes code changes or merges.
