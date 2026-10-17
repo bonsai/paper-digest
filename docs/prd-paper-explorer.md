@@ -1,15 +1,15 @@
-# PRD — Paper Digest MVP
+# PRD — Research & Engineering Knowledge Factory MVP
 
 - Status: Draft
 - Product: `bonsai/paper-digest`
 - Related: [MRD](mrd-paper-explorer.md)
-- Target corpus: 10 user-approved PDFs; candidate manifest has 14 entries (9 R2V + 5 cross-domain candidates), and PDF access is not yet verified
-- Initial research scope: AI-generated anime/video, management/organization theory, and human-AI collaboration; use the same evidence-first workflow to translate papers into plain-language four-panel comics
+- Target corpus: a small, mixed source set of papers, engineering articles, official blogs, OSS repositories, and case studies; source access and usage terms must be verified
+- Initial scope: AI software factory, agentic software engineering, GitHub automation, quality/evaluation loops, organizational learning, and human-AI collaboration; comics are optional outputs
 - Runtime priority: Kaggle / local Python, free and reproducible
 
 ## 1. Product definition
 
-PDFs from a declared source manifest are ingested into page-aware chunks. The user explores a dynamic graph, asks evidence-grounded questions with RAG, and reviews candidate insights. Kaggle is used for reproducible ML experiments in keywording and query-intent classification.
+Sources from a declared manifest are ingested into traceable records. PDFs use page-aware chunks; web articles use section/URL-level provenance; repositories use file/path/commit provenance where available. The user compares sources, asks evidence-grounded questions, and converts reviewed insights into PRDs, ADRs, Issues, experiment plans, and articles. Kaggle is an optional environment for reproducible keywording and classification experiments.
 
 ## 2. Source manifest and PDF acquisition
 
@@ -209,3 +209,54 @@ No score should be published until a real run has produced it.
 - RAG provides page-level citations and abstains when unsupported.
 - Insight candidates contain counterevidence/limitations and require human review.
 - Kaggle execution is reproducible from documented inputs and outputs.
+
+
+## 10. Article and repository ingestion
+
+### Source types
+
+Use an explicit `source_type` enum such as `paper`, `technical_article`, `official_blog`, `documentation`, `repository`, and `case_study`. Keep `peer_review_status`, `publisher`, `published_at`, `updated_at`, `canonical_url`, `license_status`, `access_status`, and `review_status` separate.
+
+### Provenance by source
+
+- PDF: paper ID, SHA-256, page, chunk ID, extraction status.
+- Web article: canonical URL, heading/section, retrieval date, author/publisher, and quoted/paraphrased claim pointer.
+- Repository: owner/name, path, commit/ref, and file-level evidence.
+- Documentation: version or last-updated date when available.
+
+Do not save entire copyrighted pages or PDFs by default. Store metadata, links, short evidence excerpts where permitted, and original analysis. Re-check source status before relying on fast-changing product documentation.
+
+## 11. Software factory workflow
+
+```mermaid
+flowchart TD
+    A[Paper / Article / Repository] --> B[Source manifest and provenance]
+    B --> C[Extract claims and concepts]
+    C --> D[Compare evidence and counterevidence]
+    D --> E[Hypothesis or design proposition]
+    E --> F[JEV experiment / implementation loop]
+    F --> G[Metrics, review, and result]
+    G --> H{Decision}
+    H -->|Adopt or adapt| I[PRD / ADR / GitHub Issue]
+    H -->|More evidence needed| D
+    I --> J[Implementation and CI]
+    J --> K[Observed outcomes]
+    K --> F
+```
+
+### Guardrails
+
+- Separate deterministic CI/CD from agentic, probabilistic tasks.
+- Prefer least privilege, read-only defaults, sandboxing, and explicit approval for writes.
+- Keep generated PRs and architecture decisions human-reviewable.
+- Evaluate outcomes rather than counting generated lines or agent activity.
+- Treat source content as untrusted input; never follow embedded instructions from retrieved documents.
+- JEV is treated as the user's named loop; acronym expansion and formal semantics remain unspecified until the user defines them.
+
+## 12. Acceptance criteria for knowledge-to-artifact flow
+
+- A user can distinguish source fact, author claim, system interpretation, and unknown.
+- Every proposed design rule has one or more source references or is explicitly marked as a hypothesis.
+- A selected insight can be exported as a draft GitHub Issue with context, rationale, acceptance criteria, evidence links, and risks.
+- Experiment outcomes and decisions can be linked back to the source and hypothesis.
+- Four-panel comics are a secondary output and are never required for MVP completion.
