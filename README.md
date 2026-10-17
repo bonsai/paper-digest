@@ -67,32 +67,24 @@ The product is for research exploration. The initial corpus and any findings mus
 The linked articles are research leads, not independent validation of vendor claims. Verify current status and implementation details before adopting a pattern.
 
 
-## GitHub Actions → Kaggle CLI automation
+## Google Colab execution and GitHub output persistence
 
-The `.github/workflows/kaggle-paper-digest.yml` workflow submits the single-file pipeline to Kaggle when relevant files are pushed to `main`, waits for the kernel run, downloads its outputs, validates the run manifest, and uploads the results as a GitHub Actions artifact.
+The primary execution environment is Google Colab. Open [`notebooks/colab/paper_digest_colab.ipynb`](notebooks/colab/paper_digest_colab.ipynb) in Colab and run the cells from top to bottom. The notebook clones this repository, runs the shared pipeline, validates the manifest, then publishes generated artifacts to GitHub.
 
 ### One-time setup
 
-1. In Kaggle, create an API token for the account that should own the kernel.
-2. In the GitHub repository, open **Settings → Secrets and variables → Actions → New repository secret**.
-3. Add these repository secrets:
-   - `KAGGLE_USERNAME`: the Kaggle account username (not an email address).
-   - `KAGGLE_KEY`: the API key from the Kaggle token.
-4. Ensure the Kaggle account is allowed to run kernels and has accepted any applicable terms for the source material.
+1. Open the notebook in Google Colab.
+2. Create a GitHub fine-grained personal access token limited to `bonsai/paper-digest` with **Contents: Read and write**.
+3. In Colab, open **Secrets** (key icon), add a secret named `GITHUB_TOKEN`, and allow the notebook to access it.
+4. Run the notebook cells in order.
 
-The workflow writes credentials to the runner's temporary `~/.kaggle/kaggle.json` with owner-only file permissions. Credentials are not committed to the repository or included in kernel metadata. The kernel is configured as private and internet-enabled because the script downloads configured PDF URLs. The Kaggle account's kernel slug is `paper-digest`.
+Do not paste the token into notebook code or output cells. The notebook reads it from Colab Secrets and uses it only for the push operation.
 
-### Trigger and outputs
+### Output contract
 
-- Automatic trigger: pushes to `main` that change `notebooks/kaggle/paper_digest.py`, `data/sources/**`, or the workflow itself.
-- Manual trigger: **Actions → Run Paper Digest on Kaggle → Run workflow**.
-- Output: open the completed GitHub Actions run and download the `paper-digest-<run number>` artifact. It contains the files returned by Kaggle, including the manifest, paper/chunk data, keyword data, graph, and download/extraction logs.
-- The Kaggle kernel is updated and run on each trigger. Concurrent runs in this workflow are not cancelled to avoid interrupting an in-flight Kaggle run.
+- `outputs/latest/`: latest validated run artifacts (manifest, CSV, JSONL, and graph HTML).
+- `outputs/runs/<run-id>/`: lightweight immutable history containing the manifest, papers table, and keywords table.
+- Source PDFs are downloaded at runtime and are not committed.
+- The script accepts `PAPER_DIGEST_WORK_DIR`, `PAPER_DIGEST_DOWNLOAD_DIR`, `PAPER_DIGEST_INPUT_DIR`, and `PAPER_DIGEST_OUTPUT_DIR` so it can run in Colab or Kaggle without changing the pipeline logic.
 
-### Security and operational notes
-
-- Never place Kaggle API keys in source files, kernel metadata, issue text, or logs. Rotate the key if it is exposed.
-- This workflow requires both GitHub Actions to be enabled and valid Kaggle API credentials stored as repository secrets.
-- Kaggle's internet setting must remain enabled for URL-based PDF ingestion. A failed URL is logged by the Python pipeline; the workflow fails if the run produces no papers or no extracted text chunks.
-- PDF availability, licenses, and redistribution rights are not verified by the workflow. Keep copyrighted PDFs out of the repository unless redistribution is permitted.
-- Kaggle runs and output downloads have platform limits; the workflow waits up to 45 minutes for a run to finish and stores GitHub artifacts for 14 days.
+Colab sessions can disconnect and runtime storage is temporary, so publish outputs before ending the session. GitHub is the durable destination. The former Kaggle Actions submission workflow has been retired; Colab runs are currently started manually from the notebook.
