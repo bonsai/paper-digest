@@ -10,6 +10,7 @@ The goal is to connect source evidence to hypotheses, experiments, architecture 
 - [Product Requirements Document](docs/prd-paper-explorer.md)
 - [Kaggle notebook scaffold](notebooks/kaggle/paper-digest-mvp.ipynb)
 - [Research source list: papers, software-factory articles, and implementation cases](data/sources/paper-list.md)
+- [Prompt-only LLM methods and evaluation research](data/sources/prompt-only-llm-evaluation.md)
 - [Machine-readable source manifest](data/sources/r2v-papers.yaml)
 
 ## MVP workflow
