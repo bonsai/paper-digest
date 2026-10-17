@@ -93,7 +93,7 @@ jobs:
 
       - name: Push script to Kaggle and start run
         run: |
-          kaggle kernels push -p .kaggle-run --timeout 3600
+          kaggle kernels push -p .kaggle-run
 
       - name: Wait for Kaggle run
         shell: bash
@@ -157,5 +157,5 @@ jobs:
         shell: bash
         run: |
           if [[ -n "$KAGGLE_USERNAME" && -n "$KAGGLE_KEY" ]]; then
-            kaggle kernels logs "$KAGGLE_USERNAME/$KERNEL_SLUG" || true
+            kaggle kernels status "$KAGGLE_USERNAME/$KERNEL_SLUG" || true
           fi
