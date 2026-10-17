@@ -3,8 +3,8 @@
 - Status: Draft
 - Product: `bonsai/paper-digest`
 - Related: [MRD](mrd-paper-explorer.md)
-- Target corpus: 10 user-approved PDFs; current R2V seed catalog has 8 entries, so source selection is incomplete
-- Initial research focus: AI-generated anime/video production and reference-to-video research
+- Target corpus: 10 user-approved PDFs; candidate manifest has 14 entries (9 R2V + 5 cross-domain candidates), and PDF access is not yet verified
+- Initial research scope: AI-generated anime/video, management/organization theory, and human-AI collaboration; use the same evidence-first workflow to translate papers into plain-language four-panel comics
 - Runtime priority: Kaggle / local Python, free and reproducible
 
 ## 1. Product definition
@@ -26,7 +26,7 @@ Each record must contain:
 - Verify HTTP status, content type, file signature, and nonzero file size before accepting a download.
 - Keep a SHA-256 hash for every downloaded file.
 - A paper source URL is not automatically a direct PDF URL.
-- The current seed catalog contains 8 records; reaching 10 PDFs requires choosing and validating two additional papers or confirming other source records. Show this as incomplete until resolved.
+- The current manifest contains 14 candidate records: 9 from R2V and 5 cross-domain additions. Candidate count is not the same as downloadable PDF count. Validate direct URLs, file signatures, and licenses/access before selecting the 10-PDF corpus. Show the corpus as incomplete until 10 valid PDFs are available.
 
 ## 3. MVP architecture
 
