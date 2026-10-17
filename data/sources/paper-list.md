@@ -1,13 +1,13 @@
-# 論文候補リスト
+# 調査ソース候補リスト：論文・記事・実装事例
 
 > 更新日: 2026-10-18  
-> 目的: 論文を根拠付きで読み、専門用語を日常語に焼き直して4コマ漫画にする。  
+> 目的: 論文・技術記事・実装事例から根拠付きの知識を抽出し、ソフトウェアファクトリーとJEVの実験・改善へつなぐ。4コマは任意の発信形式。  
 > 状態: **候補14本。10本のPDFコーパスは未確定。** URLがあることと、PDFの取得・再配布が許可されていることは別。
 
 ## 選定方針
 
 - AI動画生成だけに閉じず、経営学・組織論・人間とAIの協働も扱う。
-- 4コマにしやすい「身近な疑問 → 問題 → 研究の工夫/発見 → 意味と限界」を作れる論文を優先。
+- 実装・設計・評価・組織学習に再利用できる資料を優先する。4コマ化のしやすさは必須条件にしない。
 - すべての説明を原文のページに結びつける。たとえ話と論文の事実は区別する。
 - PDF取得時にHTTPステータス、PDFシグネチャ、ファイルサイズ、SHA-256、利用条件を確認する。
 - PDF未取得の候補を「読み込み済み」と扱わない。著作権上の確認前にPDFや全文をリポジトリへコミットしない。
@@ -42,3 +42,26 @@
 2. PDFを実際に取得できるか確認し、利用条件とSHA-256を記録する。
 3. PDFごとにページ付きテキストを抽出し、要約・漫画の各コマを根拠ページに紐づける。
 4. まずはトヨタ自主研か心理的安全性の論文で、やさしい言葉の4コマ試作を行う。
+
+
+## C. ソフトウェアファクトリー・AIエージェント実践記事
+
+> 以下は初期調査候補。記事を読んだこと、内容を再現したこと、成果が独立検証済みであることを意味しない。発行日・アクセス条件は利用時に再確認する。
+
+| 記事・資料 | 発行元 / 日付 | 主なテーマ | 使い道・検証ポイント |
+|---|---|---|---|
+| [Automate repository tasks with GitHub Agentic Workflows](https://github.blog/ai-and-ml/automate-repository-tasks-with-github-agentic-workflows/) | GitHub Blog / 2026-02-13 | GitHub Actions上のエージェント、Issueトリアージ、ドキュメント、テスト、CI失敗調査 | 読み取り専用を基本にした権限設計、safe outputs、人間の承認点を設計パターンとして抽出 |
+| [Learn from Microsoft: Transform software development through an agentic platform](https://developer.microsoft.com/blog/learn-from-microsoft-transform-software-development-through-an-agentic-platform/) | Microsoft for Developers / 2026-06-25 | ソフトウェアファクトリーからエージェントファクトリーへの移行、SDLC全体の協働 | 企業の自己報告と測定済み効果を区別し、再利用可能なワークフロー単位を整理 |
+| [Welcome to the Agent Factory](https://elastic.github.io/ai-github-actions/blog/welcome-to-the-agent-factory/) | Elastic AI GitHub Actions / 2026-02-04 | GitHub Actions上の専門エージェント群、PRレビュー、バグ探索、Issue整理 | 実際のワークフロー定義・権限・失敗時の挙動をリポジトリで照合 |
+| [Humans and Agents in Software Engineering Loops](https://martinfowler.com/articles/exploring-gen-ai/humans-and-agents.html) | Martin Fowler / 2026-03-04 | 人間がループ全体を設計・監督する考え方 | 目的のループと実装のループを分け、JEVの仮説→実験→評価→判断へマッピング |
+| [Why AI Agents Still Need You: Findings from Developer-Agent Collaborations in the Wild](https://www.microsoft.com/en-us/research/publication/sharp-tools-how-developers-wield-agentic-ai-in-real-software-engineering-tasks/?lang=ja) | Microsoft Research / ASE 2025 | 19人の開発者による33件のIssue解決観察、段階的な協働と反復 | 研究論文として方法・サンプル・限界を確認し、ワンショット実行と反復協働を比較する仮説に使う |
+
+## D. ここから作る実験候補
+
+1. **IssueからPRまでのエージェントループ**：Issueを要件・受け入れ条件に分解し、実装はドラフトPRまで。マージは人間が判断。
+2. **ドキュメント同期**：コード変更後にREADME/API docsの不整合を検出し、修正提案を作る。
+3. **CI失敗調査**：ログ要約、原因候補、再現手順、最小修正案を生成し、テストで検証する。
+4. **ナレッジ再利用**：過去のADR・Issue・リポジトリ規約から、新規Issueの設計候補を提示する。
+5. **JEV評価ループ**：各実験に仮説、成功指標、ベースライン、結果、採否、次の一手を記録する。
+
+各実験は「便利そう」で採用せず、作業時間、レビュー修正量、テスト結果、再オープン率、根拠リンクの正確さなど、測定可能な指標を事前に定める。
