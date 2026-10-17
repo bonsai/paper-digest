@@ -1,0 +1,5 @@
+# Minimal dependencies for the first PDF-ingestion milestone
+PyMuPDF>=1.24,<2
+pandas>=2.0,<4
+numpy>=1.24,<3
+plotly>=5.18,<7
