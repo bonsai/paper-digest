@@ -28,7 +28,7 @@ The goal is to connect source evidence to hypotheses, experiments, architecture 
 
 ## Current status
 
-The single-file Kaggle pipeline is implemented at [`notebooks/kaggle/paper_digest.py`](notebooks/kaggle/paper_digest.py). It downloads configured PDF URLs, extracts page-aware text, computes TF-IDF keywords, builds a paper-keyword graph, and retrieves source excerpts for configured questions. Its RAG output is retrieval with citations, not an LLM-synthesized answer. Results are generated at runtime; do not treat example outputs or planned metrics as measured results.
+The single-file pipeline is implemented at [`notebooks/kaggle/paper_digest.py`](notebooks/kaggle/paper_digest.py). It downloads configured PDF URLs, extracts page-aware text, computes TF-IDF keywords, builds a paper-keyword graph, and retrieves source excerpts for six default Japanese questions using English retrieval-query expansions. RAG evidence includes paper ID, page, chunk, excerpt, and source PDF URL. Its answers are retrieval notices plus cited evidence, not LLM-synthesized summaries. After changing the pipeline, rerun [the Colab notebook](notebooks/colab/paper_digest_colab.ipynb) to regenerate and push `outputs/latest/`; the public dashboard only shows the last published run. Results are generated at runtime; do not treat example outputs or planned metrics as measured results.
 
 ## Data and provenance principles
 
