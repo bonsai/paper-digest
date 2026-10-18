@@ -1,0 +1,60 @@
+name: Deploy Paper Digest dashboard
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "index.html"
+      - ".nojekyll"
+      - "outputs/latest/**"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Prepare static site
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f index.html
+          test -f outputs/latest/papers.csv
+          test -f outputs/latest/keywords.csv
+          test -f outputs/latest/run-manifest.json
+          mkdir -p _site/outputs
+          cp index.html .nojekyll _site/
+          cp -R outputs/latest _site/outputs/latest
+          find _site -maxdepth 3 -type f -print
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
