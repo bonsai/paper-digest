@@ -1,0 +1,109 @@
+paper_id,title,keyword,tfidf_score,rank
+chain-of-thought-prompting-2022,chain-of-thought-prompting-2022,chains thought,0.045458,1
+chain-of-thought-prompting-2022,chain-of-thought-prompting-2022,model answer,0.044552,2
+chain-of-thought-prompting-2022,chain-of-thought-prompting-2022,balls,0.044359,3
+chain-of-thought-prompting-2022,chain-of-thought-prompting-2022,heads,0.044163,4
+chain-of-thought-prompting-2022,chain-of-thought-prompting-2022,coin,0.043965,5
+chain-of-thought-prompting-2022,chain-of-thought-prompting-2022,standard prompting,0.043962,6
+chain-of-thought-prompting-2022,chain-of-thought-prompting-2022,today,0.043546,7
+chain-of-thought-prompting-2022,chain-of-thought-prompting-2022,equation,0.041125,8
+chain-of-thought-prompting-2022,chain-of-thought-prompting-2022,computers,0.040844,9
+chain-of-thought-prompting-2022,chain-of-thought-prompting-2022,few-shot exemplars,0.040553,10
+chain-of-thought-prompting-2022,chain-of-thought-prompting-2022,lollipops,0.039943,11
+chain-of-thought-prompting-2022,chain-of-thought-prompting-2022,coin heads,0.039943,12
+face-consistency-benchmark-2025,face-consistency-benchmark-2025,ai-generated,0.107182,1
+face-consistency-benchmark-2025,face-consistency-benchmark-2025,face consistency,0.101574,2
+face-consistency-benchmark-2025,face-consistency-benchmark-2025,ai-generated videos,0.098334,3
+face-consistency-benchmark-2025,face-consistency-benchmark-2025,fcb,0.090604,4
+face-consistency-benchmark-2025,face-consistency-benchmark-2025,facial consistency,0.090604,5
+face-consistency-benchmark-2025,face-consistency-benchmark-2025,aigcbench,0.085863,6
+face-consistency-benchmark-2025,face-consistency-benchmark-2025,runway,0.085863,7
+face-consistency-benchmark-2025,face-consistency-benchmark-2025,mode,0.085863,8
+face-consistency-benchmark-2025,face-consistency-benchmark-2025,consistency benchmark,0.085863,9
+face-consistency-benchmark-2025,face-consistency-benchmark-2025,face recognition,0.085863,10
+face-consistency-benchmark-2025,face-consistency-benchmark-2025,video,0.083936,11
+face-consistency-benchmark-2025,face-consistency-benchmark-2025,videos,0.080713,12
+mt-bench-chatbot-arena-2023,mt-bench-chatbot-arena-2023,assistant,0.057147,1
+mt-bench-chatbot-arena-2023,mt-bench-chatbot-arena-2023,mt-bench,0.056003,2
+mt-bench-chatbot-arena-2023,mt-bench-chatbot-arena-2023,assistant answer,0.055538,3
+mt-bench-chatbot-arena-2023,mt-bench-chatbot-arena-2023,votes,0.053171,4
+mt-bench-chatbot-arena-2023,mt-bench-chatbot-arena-2023,position bias,0.052875,5
+mt-bench-chatbot-arena-2023,mt-bench-chatbot-arena-2023,arena,0.05257,6
+mt-bench-chatbot-arena-2023,mt-bench-chatbot-arena-2023,assistants,0.050553,7
+mt-bench-chatbot-arena-2023,mt-bench-chatbot-arena-2023,grading,0.050179,8
+mt-bench-chatbot-arena-2023,mt-bench-chatbot-arena-2023,user question,0.048978,9
+mt-bench-chatbot-arena-2023,mt-bench-chatbot-arena-2023,chatbot arena,0.048548,10
+mt-bench-chatbot-arena-2023,mt-bench-chatbot-arena-2023,agreement,0.048393,11
+mt-bench-chatbot-arena-2023,mt-bench-chatbot-arena-2023,llm judges,0.048101,12
+omnivbench-2026,omnivbench-2026,narrative,0.054233,1
+omnivbench-2026,omnivbench-2026,omni,0.050828,2
+omnivbench-2026,omnivbench-2026,omnivbench,0.048976,3
+omnivbench-2026,omnivbench-2026,realization,0.048457,4
+omnivbench-2026,omnivbench-2026,factor,0.046071,5
+omnivbench-2026,omnivbench-2026,omni-r2v,0.045731,6
+omnivbench-2026,omnivbench-2026,motion style,0.045731,7
+omnivbench-2026,omnivbench-2026,reference target,0.044636,8
+omnivbench-2026,omnivbench-2026,content structure,0.043836,9
+omnivbench-2026,omnivbench-2026,storyboard,0.043412,10
+omnivbench-2026,omnivbench-2026,criterion,0.043412,11
+omnivbench-2026,omnivbench-2026,omni-r2v dataset,0.043412,12
+prompt-engineering-survey-sahoo-2024,prompt-engineering-survey-sahoo-2024,manual single,0.050013,1
+prompt-engineering-survey-sahoo-2024,prompt-engineering-survey-sahoo-2024,prompting,0.047577,2
+prompt-engineering-survey-sahoo-2024,prompt-engineering-survey-sahoo-2024,llms,0.046917,3
+prompt-engineering-survey-sahoo-2024,prompt-engineering-survey-sahoo-2024,cot prompting,0.04474,4
+prompt-engineering-survey-sahoo-2024,prompt-engineering-survey-sahoo-2024,bot,0.043782,5
+prompt-engineering-survey-sahoo-2024,prompt-engineering-survey-sahoo-2024,cod,0.043782,6
+prompt-engineering-survey-sahoo-2024,prompt-engineering-survey-sahoo-2024,multi gpt-3,0.043782,7
+prompt-engineering-survey-sahoo-2024,prompt-engineering-survey-sahoo-2024,eedp,0.042385,8
+prompt-engineering-survey-sahoo-2024,prompt-engineering-survey-sahoo-2024,prompting llms,0.042385,9
+prompt-engineering-survey-sahoo-2024,prompt-engineering-survey-sahoo-2024,generated multi,0.042385,10
+prompt-engineering-survey-sahoo-2024,prompt-engineering-survey-sahoo-2024,enhances,0.041519,11
+prompt-engineering-survey-sahoo-2024,prompt-engineering-survey-sahoo-2024,vlms,0.040824,12
+prompt-engineering-survey-vatsal-dubey-2024,prompt-engineering-survey-vatsal-dubey-2024,basic cot,0.054144,1
+prompt-engineering-survey-vatsal-dubey-2024,prompt-engineering-survey-vatsal-dubey-2024,different prompting,0.050996,2
+prompt-engineering-survey-vatsal-dubey-2024,prompt-engineering-survey-vatsal-dubey-2024,codex code-davinci-002,0.047065,3
+prompt-engineering-survey-vatsal-dubey-2024,prompt-engineering-survey-vatsal-dubey-2024,strategies llm,0.0461,4
+prompt-engineering-survey-vatsal-dubey-2024,prompt-engineering-survey-vatsal-dubey-2024,llm sota,0.0461,5
+prompt-engineering-survey-vatsal-dubey-2024,prompt-engineering-survey-vatsal-dubey-2024,dataset prompting,0.045843,6
+prompt-engineering-survey-vatsal-dubey-2024,prompt-engineering-survey-vatsal-dubey-2024,experimented,0.045579,7
+prompt-engineering-survey-vatsal-dubey-2024,prompt-engineering-survey-vatsal-dubey-2024,table-based,0.045308,8
+prompt-engineering-survey-vatsal-dubey-2024,prompt-engineering-survey-vatsal-dubey-2024,table prompt,0.044743,9
+prompt-engineering-survey-vatsal-dubey-2024,prompt-engineering-survey-vatsal-dubey-2024,best performing,0.044144,10
+prompt-engineering-survey-vatsal-dubey-2024,prompt-engineering-survey-vatsal-dubey-2024,performing prompting,0.044144,11
+prompt-engineering-survey-vatsal-dubey-2024,prompt-engineering-survey-vatsal-dubey-2024,gpt-3 text-davinci-003,0.04383,12
+promptrobust-2023,promptrobust-2023,attacks,0.065517,1
+promptrobust-2023,promptrobust-2023,adversarial prompts,0.063609,2
+promptrobust-2023,promptrobust-2023,adversarial,0.060847,3
+promptrobust-2023,promptrobust-2023,promptrobust,0.054365,4
+promptrobust-2023,promptrobust-2023,attack,0.047987,5
+promptrobust-2023,promptrobust-2023,bertattack,0.047455,6
+promptrobust-2023,promptrobust-2023,deepwordbug,0.046945,7
+promptrobust-2023,promptrobust-2023,perturbations,0.045851,8
+promptrobust-2023,promptrobust-2023,textbugger,0.045851,9
+promptrobust-2023,promptrobust-2023,stresstest,0.045851,10
+promptrobust-2023,promptrobust-2023,sentence-level,0.044642,11
+promptrobust-2023,promptrobust-2023,cola,0.043986,12
+refalign-reference-to-video-2026,refalign-reference-to-video-2026,refalign,0.081318,1
+refalign-reference-to-video-2026,refalign-reference-to-video-2026,dit,0.076411,2
+refalign-reference-to-video-2026,refalign-reference-to-video-2026,vfm,0.074124,3
+refalign-reference-to-video-2026,refalign-reference-to-video-2026,repa,0.064073,4
+refalign-reference-to-video-2026,refalign-reference-to-video-2026,totalscore,0.061908,5
+refalign-reference-to-video-2026,refalign-reference-to-video-2026,representation alignment,0.061908,6
+refalign-reference-to-video-2026,refalign-reference-to-video-2026,dinov3,0.060276,7
+refalign-reference-to-video-2026,refalign-reference-to-video-2026,mathrm,0.058451,8
+refalign-reference-to-video-2026,refalign-reference-to-video-2026,lra,0.055234,9
+refalign-reference-to-video-2026,refalign-reference-to-video-2026,alignment loss,0.055234,10
+refalign-reference-to-video-2026,refalign-reference-to-video-2026,phantom vino,0.055234,11
+refalign-reference-to-video-2026,refalign-reference-to-video-2026,encoders,0.053993,12
+scaling-zero-shot-reference-to-video-2025,scaling-zero-shot-reference-to-video-2025,mask,0.086107,1
+scaling-zero-shot-reference-to-video-2025,scaling-zero-shot-reference-to-video-2025,masked training,0.067827,2
+scaling-zero-shot-reference-to-video-2025,scaling-zero-shot-reference-to-video-2025,saber,0.067075,3
+scaling-zero-shot-reference-to-video-2025,scaling-zero-shot-reference-to-video-2025,masked,0.066503,4
+scaling-zero-shot-reference-to-video-2025,scaling-zero-shot-reference-to-video-2025,video-text,0.061245,5
+scaling-zero-shot-reference-to-video-2025,scaling-zero-shot-reference-to-video-2025,training strategy,0.060197,6
+scaling-zero-shot-reference-to-video-2025,scaling-zero-shot-reference-to-video-2025,mask augmentation,0.057874,7
+scaling-zero-shot-reference-to-video-2025,scaling-zero-shot-reference-to-video-2025,r2v,0.056762,8
+scaling-zero-shot-reference-to-video-2025,scaling-zero-shot-reference-to-video-2025,reference images,0.056482,9
+scaling-zero-shot-reference-to-video-2025,scaling-zero-shot-reference-to-video-2025,masked frames,0.055162,10
+scaling-zero-shot-reference-to-video-2025,scaling-zero-shot-reference-to-video-2025,copy-paste,0.053615,11
+scaling-zero-shot-reference-to-video-2025,scaling-zero-shot-reference-to-video-2025,video-text pairs,0.053615,12
