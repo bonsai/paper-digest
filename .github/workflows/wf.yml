@@ -4,7 +4,10 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - "data/sources/**"
+      - "inputs/sources/**"
+      - "notebooks/**"
+      - "outputs/latest/**"
+      - "requirements.txt"
       - ".github/workflows/wf.yml"
   schedule:
     - cron: "17 0 * * 1"
@@ -17,8 +20,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  validate-catalog:
-    name: Validate digest sources
+  validate-repository:
+    name: Validate digest sources and repository state
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
@@ -26,53 +29,96 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Validate source files and build catalog report
+      - name: Validate source files, notebooks, and output contract
         shell: python
         run: |
+          import ast
           import json
           import os
           from collections import Counter
           from pathlib import Path
 
           root = Path(".")
-          jsonl_path = root / "data/sources/prompt-only-llm-evaluation-list.jsonl"
+          jsonl_path = root / "inputs/sources/prompt-only-llm-evaluation-list.jsonl"
           required_paths = [
-              root / "data/sources/paper-list.md",
-              root / "data/sources/prompt-only-llm-evaluation-list.md",
-              root / "data/sources/prompt-only-llm-evaluation.md",
-              root / "data/sources/r2v-papers.yaml",
+              root / "inputs/sources/paper-list.md",
+              root / "inputs/sources/prompt-only-llm-evaluation-list.md",
+              root / "inputs/sources/prompt-only-llm-evaluation.md",
+              root / "inputs/sources/r2v-papers.yaml",
               jsonl_path,
           ]
 
-          missing = [str(path) for path in required_paths if not path.is_file()]
-          if missing:
-              raise SystemExit("Missing required source files:\n- " + "\n- ".join(missing))
-
-          records = []
           errors = []
-          for line_number, line in enumerate(jsonl_path.read_text(encoding="utf-8").splitlines(), 1):
-              if not line.strip():
-                  continue
+
+          # ---- catalog JSONL validation ----
+          records = []
+          missing = [str(p) for p in required_paths if not p.is_file()]
+          if missing:
+              errors.append("Missing required source files:\n- " + "\n- ".join(missing))
+          else:
+              for line_number, line in enumerate(jsonl_path.read_text(encoding="utf-8").splitlines(), 1):
+                  if not line.strip():
+                      continue
+                  try:
+                      item = json.loads(line)
+                  except json.JSONDecodeError as exc:
+                      errors.append(f"{jsonl_path}:{line_number}: invalid JSON: {exc}")
+                      continue
+                  if not isinstance(item, dict):
+                      errors.append(f"{jsonl_path}:{line_number}: each JSONL row must be an object")
+                      continue
+                  for key in ("id", "record_type", "title", "status"):
+                      if not item.get(key):
+                          errors.append(f"{jsonl_path}:{line_number}: missing required field '{key}'")
+                  records.append(item)
+
+              ids = [item.get("id") for item in records]
+              duplicates = sorted({v for v in ids if v and ids.count(v) > 1})
+              if duplicates:
+                  errors.append("Duplicate record IDs: " + ", ".join(duplicates))
+
+          # ---- notebook validation (JSON + code-cell syntax) ----
+          notebook_count = 0
+          for notebook_path in sorted((root / "notebooks").rglob("*.ipynb")):
+              notebook_count += 1
               try:
-                  item = json.loads(line)
+                  nb = json.loads(notebook_path.read_text(encoding="utf-8"))
               except json.JSONDecodeError as exc:
-                  errors.append(f"{jsonl_path}:{line_number}: invalid JSON: {exc}")
+                  errors.append(f"{notebook_path}: invalid notebook JSON: {exc}")
                   continue
-              if not isinstance(item, dict):
-                  errors.append(f"{jsonl_path}:{line_number}: each JSONL row must be an object")
-                  continue
-              for key in ("id", "record_type", "title", "status"):
-                  if not item.get(key):
-                      errors.append(f"{jsonl_path}:{line_number}: missing required field '{key}'")
-              records.append(item)
+              for index, cell in enumerate(nb.get("cells", [])):
+                  if cell.get("cell_type") != "code":
+                      continue
+                  source = "".join(cell.get("source", []))
+                  # Strip IPython magics (%pip, %cd, ...) before the syntax check.
+                  body = "\n".join(
+                      line for line in source.split("\n") if not line.lstrip().startswith("%")
+                  )
+                  try:
+                      ast.parse(body)
+                  except SyntaxError as exc:
+                      errors.append(f"{notebook_path}: cell {index}: syntax error: {exc}")
 
-          ids = [item.get("id") for item in records]
-          duplicates = sorted({value for value in ids if value and ids.count(value) > 1})
-          if duplicates:
-              errors.append("Duplicate record IDs: " + ", ".join(duplicates))
+          # ---- outputs/latest public contract ----
+          contract = [
+              root / "outputs/latest/papers.csv",
+              root / "outputs/latest/keywords.csv",
+              root / "outputs/latest/chunks.jsonl",
+              root / "outputs/latest/run-manifest.json",
+          ]
+          missing_outputs = [str(p) for p in contract if not p.is_file()]
+          if missing_outputs:
+              errors.append("outputs/latest contract broken (rerun the Colab notebook):\n- " + "\n- ".join(missing_outputs))
+
+          # ---- requirements.txt is a valid pip file ----
+          requirements = root / "requirements.txt"
+          if not requirements.is_file():
+              errors.append("requirements.txt is missing")
+
           if errors:
-              raise SystemExit("\n".join(errors))
+              raise SystemExit("\n\n".join(errors))
 
+          # ---- report ----
           types = Counter(item.get("record_type", "unspecified") for item in records)
           statuses = Counter(item.get("status", "unspecified") for item in records)
           report = [
@@ -81,6 +127,8 @@ jobs:
               f"- Commit: `{os.environ.get('GITHUB_SHA', 'local')}`",
               f"- JSONL source: `{jsonl_path}`",
               f"- Valid records: **{len(records)}**",
+              f"- Notebooks validated: **{notebook_count}**",
+              "- Output contract: **ok**",
               "- Validation: **passed**",
               "",
               "## Records by type",
@@ -91,7 +139,7 @@ jobs:
           report.extend(f"- {name}: {count}" for name, count in sorted(statuses.items()))
           report += [
               "",
-              "> This workflow validates catalog structure only. It does not claim that sources were read, facts were verified, or experiments were reproduced.",
+              "> This workflow validates catalog structure, notebook syntax, and the published output contract only. It does not claim that sources were read, facts were verified, or experiments were reproduced. The pipeline itself runs in Google Colab.",
               "",
           ]
 
