@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Paper Digest — 論文の抽出・キーワード・根拠検索結果を閲覧する">
+<title>Paper Digest | Research Explorer</title>
+<style>
+:root{color-scheme:light;--ink:#172033;--muted:#64748b;--line:#e2e8f0;--paper:#fff;--bg:#f6f8fb;--accent:#0f766e;--blue:#2563eb}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{background:#102a43;color:white;padding:34px 20px}header .inner,main{max-width:1120px;margin:auto}h1{margin:0;font-size:clamp(1.8rem,4vw,2.7rem);letter-spacing:-.03em}header p{margin:.5rem 0 0;color:#dbeafe}.eyebrow{text-transform:uppercase;letter-spacing:.14em;font-size:.75rem;color:#5eead4;font-weight:700}
+main{padding:24px 18px 56px}.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}.stat,.panel{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px}.stat span{display:block;color:var(--muted);font-size:.86rem}.stat strong{font-size:1.8rem}.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.toolbar input,.toolbar select{background:white;border:1px solid #cbd5e1;border-radius:9px;padding:10px 12px;font:inherit;min-width:180px}.toolbar input{flex:1}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.tabs button,.linkbtn{border:1px solid #cbd5e1;background:white;color:var(--ink);padding:9px 13px;border-radius:9px;font:inherit;text-decoration:none;cursor:pointer}.tabs button[aria-selected=true]{background:var(--accent);border-color:var(--accent);color:white}.panel h2{font-size:1.2rem;margin:0 0 12px}.sub{color:var(--muted);font-size:.9rem}.tablewrap{overflow:auto}table{border-collapse:collapse;width:100%;font-size:.92rem}th,td{text-align:left;vertical-align:top;padding:11px 10px;border-bottom:1px solid var(--line)}th{background:#f8fafc;white-space:nowrap}td a{color:#0f766e;font-weight:650;text-decoration:none}td a:hover{text-decoration:underline}.pill{display:inline-block;background:#ccfbf1;color:#115e59;border-radius:99px;padding:2px 8px;font-size:.78rem;margin:2px}.actions{display:flex;gap:8px;flex-wrap:wrap}.hidden{display:none}.notice{padding:14px;border-radius:10px;background:#fffbeb;color:#92400e}.error{color:#b91c1c}.footer{color:var(--muted);font-size:.86rem;margin-top:22px}.q{border-top:1px solid var(--line);padding:14px 0}.q:first-of-type{border-top:0}.q h3{font-size:1rem;margin:0 0 5px}.excerpt{white-space:pre-wrap;overflow-wrap:anywhere;background:#f8fafc;border-radius:8px;padding:10px;margin-top:8px;font-size:.9rem}code{overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+<header><div class="inner"><div class="eyebrow">Research & Engineering Knowledge Factory</div><h1>Paper Digest</h1><p>論文データ、キーワード、根拠付き検索結果をブラウザで確認する。</p></div></header>
+<main>
+<div id="status" class="notice">最新の実行結果を読み込んでいます…</div>
+<section class="stats" aria-label="実行サマリー">
+<div class="stat"><span>論文数</span><strong id="paperCount">—</strong></div><div class="stat"><span>キーワード</span><strong id="keywordCount">—</strong></div><div class="stat"><span>質問・検索結果</span><strong id="ragCount">—</strong></div><div class="stat"><span>抽出エラー</span><strong id="errorCount">—</strong></div>
+</section>
+<div class="actions">
+<a class="linkbtn" href="./outputs/latest/papers.csv">papers.csv</a>
+<a class="linkbtn" href="./outputs/latest/keywords.csv">keywords.csv</a>
+<a class="linkbtn" href="./outputs/latest/run-manifest.json">run manifest</a>
+<a class="linkbtn" href="./outputs/latest/keyword-graph.html">キーワード・グラフ</a>
+<a class="linkbtn" href="https://github.com/bonsai/paper-digest/tree/main/outputs/latest">GitHubの全成果物</a>
+</div>
+<nav class="tabs" aria-label="表示切り替え">
+<button data-tab="papers" aria-selected="true">論文一覧</button><button data-tab="keywords" aria-selected="false">キーワード</button><button data-tab="rag" aria-selected="false">根拠検索</button><button data-tab="run" aria-selected="false">実行情報</button>
+</nav>
+<section id="papers" class="panel"><h2>論文一覧</h2><p class="sub">登録された論文とテキスト抽出状況。</p><div class="toolbar"><input id="paperSearch" type="search" placeholder="論文名・IDで検索…" aria-label="論文を検索"><select id="paperStatus" aria-label="抽出状況"><option value="">すべての状態</option><option value="ok">抽出成功</option><option value="error">エラーあり</option></select></div><div class="tablewrap"><table><thead><tr><th>論文</th><th>ページ</th><th>抽出状態</th><th>PDF名</th></tr></thead><tbody id="paperRows"><tr><td colspan="4">読み込み中…</td></tr></tbody></table></div></section>
+<section id="keywords" class="panel hidden"><h2>キーワード</h2><p class="sub">TF-IDFによる抽出語。科学的概念として検証済みのラベルではありません。</p><div class="toolbar"><input id="keywordSearch" type="search" placeholder="キーワード・論文名で検索…" aria-label="キーワードを検索"><select id="keywordPaper" aria-label="論文で絞り込み"><option value="">すべての論文</option></select></div><div class="tablewrap"><table><thead><tr><th>キーワード</th><th>論文</th><th>順位</th><th>TF-IDF</th></tr></thead><tbody id="keywordRows"><tr><td colspan="4">読み込み中…</td></tr></tbody></table></div></section>
+<section id="rag" class="panel hidden"><h2>根拠検索の結果</h2><p class="sub">抽出型RAGの検索結果です。LLMが生成した要約ではありません。根拠のページ番号を確認してください。</p><div id="ragRows">読み込み中…</div></section>
+<section id="run" class="panel hidden"><h2>実行情報</h2><pre id="manifest" style="white-space:pre-wrap;overflow-wrap:anywhere">読み込み中…</pre></section>
+<p class="footer">静的サイト — ブラウザから outputs/latest/ の公開成果物を読み込みます。PDF本体はこの画面に含めません。</p>
+</main>
+<script>
+const base='./outputs/latest/';
+let papers=[], keywords=[], rag=[], manifest={};
+function parseCSV(text){
+ const rows=[];let row=[],field='',quoted=false;
+ for(let i=0;i<text.length;i++){const c=text[i];if(quoted){if(c==='"'&&text[i+1]==='"'){field+='"';i++}else if(c==='"')quoted=false;else field+=c}else if(c==='"')quoted=true;else if(c===','){row.push(field);field=''}else if(c==='\n'){row.push(field.replace(/\r$/,''));if(row.some(v=>v!==''))rows.push(row);row=[];field=''}else field+=c}
+ if(field!==''||row.length){row.push(field);rows.push(row)}
+ const headers=rows.shift()||[];return rows.map(r=>Object.fromEntries(headers.map((h,i)=>[h,r[i]??''])));
+}
+async function load(path){const res=await fetch(base+path);if(!res.ok)throw new Error(path+' を取得できません ('+res.status+')');return res.text()}
+function parseJSONL(s){return s.split(/\r?\n/).filter(x=>x.trim()).map(x=>{try{return JSON.parse(x)}catch{return null}}).filter(Boolean)}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function renderPapers(){const q=document.querySelector('#paperSearch').value.toLowerCase(),status=document.querySelector('#paperStatus').value;const list=papers.filter(p=>(!q||(p.title+' '+p.paper_id+' '+p.file_name).toLowerCase().includes(q))&&(!status||String(p.extraction_status).toLowerCase().includes(status)));document.querySelector('#paperRows').innerHTML=list.map(p=>'<tr><td><strong>'+esc(p.title||p.paper_id)+'</strong><br><span class="sub">'+esc(p.paper_id)+'</span></td><td>'+esc(p.page_count||'—')+'</td><td><span class="pill">'+esc(p.extraction_status||'不明')+'</span></td><td>'+esc(p.file_name||'—')+'</td></tr>').join('')||'<tr><td colspan="4">一致する論文がありません。</td></tr>'}
+function renderKeywords(){const q=document.querySelector('#keywordSearch').value.toLowerCase(),id=document.querySelector('#keywordPaper').value;const list=keywords.filter(k=>(!q||(k.keyword+' '+k.title+' '+k.paper_id).toLowerCase().includes(q))&&(!id||k.paper_id===id));document.querySelector('#keywordRows').innerHTML=list.slice(0,500).map(k=>'<tr><td><strong>'+esc(k.keyword)+'</strong></td><td>'+esc(k.title||k.paper_id)+'<br><span class="sub">'+esc(k.paper_id)+'</span></td><td>'+esc(k.rank)+'</td><td>'+esc(k.tfidf_score)+'</td></tr>').join('')||'<tr><td colspan="4">一致するキーワードがありません。</td></tr>'}
+function renderRag(){document.querySelector('#ragRows').innerHTML=rag.map(item=>'<article class="q"><h3>'+esc(item.question||'質問')+'</h3><p>'+esc(item.answer||'')+'</p>'+((item.evidence||[]).map(ev=>'<div class="excerpt"><strong>'+esc(ev.title||ev.paper_id)+' — p.'+esc(ev.page)+'</strong> <span class="sub">score '+esc(ev.score)+'</span><p>'+esc(ev.excerpt||'')+'</p></div>').join('')||'<p class="sub">該当する根拠はありません。</p>')+'</article>').join('')||'RAGの質問結果はありません。'}
+async function init(){try{const [p,k,m,r]=await Promise.all([load('papers.csv'),load('keywords.csv'),load('run-manifest.json'),load('rag-answers.jsonl')]);papers=parseCSV(p);keywords=parseCSV(k);manifest=JSON.parse(m);rag=parseJSONL(r);document.querySelector('#paperCount').textContent=manifest.paper_count??papers.length;document.querySelector('#keywordCount').textContent=manifest.keyword_row_count??keywords.length;document.querySelector('#ragCount').textContent=manifest.rag_question_count??rag.length;document.querySelector('#errorCount').textContent=manifest.extraction_error_count??'—';document.querySelector('#status').className='';document.querySelector('#status').textContent='読み込み完了：'+(manifest.created_at_utc||'実行日時不明')+' UTC';document.querySelector('#manifest').textContent=JSON.stringify(manifest,null,2);document.querySelector('#keywordPaper').innerHTML='<option value="">すべての論文</option>'+papers.map(p=>'<option value="'+esc(p.paper_id)+'">'+esc(p.title||p.paper_id)+'</option>').join('');renderPapers();renderKeywords();renderRag()}catch(e){document.querySelector('#status').className='notice error';document.querySelector('#status').textContent='データを読み込めませんでした：'+e.message+'。GitHubの outputs/latest を確認してください。'}}
+document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.setAttribute('aria-selected',String(x===b)));document.querySelectorAll('main > section.panel').forEach(s=>s.classList.toggle('hidden',s.id!==b.dataset.tab))}));
+document.querySelector('#paperSearch').addEventListener('input',renderPapers);document.querySelector('#paperStatus').addEventListener('change',renderPapers);document.querySelector('#keywordSearch').addEventListener('input',renderKeywords);document.querySelector('#keywordPaper').addEventListener('change',renderKeywords);init();
+</script>
+</body></html>
