@@ -55,9 +55,23 @@ PDF_DIRS = [
     Path("./pdfs"),
 ]
 OUTPUT_DIR = Path(os.environ.get("PAPER_DIGEST_OUTPUT_DIR", str(WORK_DIR / "paper-digest-output")))
-# Put questions here. Example:
-# QUESTIONS = ["What methods are compared?", "What limitations are reported?"]
-QUESTIONS = []
+# Japanese display questions paired with English retrieval queries.
+# The baseline tokenizer is English-focused; query_text makes Japanese questions searchable
+# without pretending that the retrieved excerpts are generated summaries.
+QUESTIONS = [
+    {"question": "プロンプトエンジニアリングの代表的な手法・分類は？",
+     "query": "prompt engineering methods techniques taxonomy strategies"},
+    {"question": "Chain-of-thought promptingの効果や評価結果は？",
+     "query": "chain of thought prompting reasoning results accuracy"},
+    {"question": "プロンプトの頑健性に関する課題は？",
+     "query": "prompt robustness perturbation robustness limitations"},
+    {"question": "画像・動画生成で参照人物や外見の一貫性をどう評価している？",
+     "query": "reference to video identity consistency benchmark evaluation metrics"},
+    {"question": "研究で使われている評価データセットや指標は？",
+     "query": "benchmark dataset evaluation metrics human evaluation"},
+    {"question": "各研究が報告している限界や今後の課題は？",
+     "query": "limitations future work failure cases"}
+]
 CHUNK_WORDS = 220
 CHUNK_OVERLAP_WORDS = 40
 TOP_KEYWORDS_PER_PAPER = 12
@@ -189,6 +203,13 @@ def split_words(text: str, chunk_words: int, overlap_words: int) -> list[str]:
 
 def extract_pdfs(pdf_paths: list[Path]) -> tuple[list[dict], list[dict], list[dict]]:
     papers, chunks, errors = [], [], []
+    source_urls_by_filename = {}
+    for item in PDF_URLS:
+        if isinstance(item, dict):
+            filename = str(item.get("filename", "")).strip()
+            url = str(item.get("url", "")).strip()
+            if filename and url:
+                source_urls_by_filename[safe_id(Path(filename).stem) + ".pdf"] = url
     for path in pdf_paths:
         paper_id = safe_id(path.stem)
         file_hash = sha256_file(path)
@@ -197,6 +218,7 @@ def extract_pdfs(pdf_paths: list[Path]) -> tuple[list[dict], list[dict], list[di
             "title": path.stem,
             "file_name": path.name,
             "file_path": str(path),
+            "source_url": source_urls_by_filename.get(path.name, ""),
             "sha256": file_hash,
             "page_count": 0,
             "extraction_status": "pending",
@@ -220,6 +242,7 @@ def extract_pdfs(pdf_paths: list[Path]) -> tuple[list[dict], list[dict], list[di
                             "text": text,
                             "sha256": hashlib.sha256(text.encode("utf-8")).hexdigest(),
                             "source_file": path.name,
+                            "source_url": source_urls_by_filename.get(path.name, ""),
                         })
             paper["extraction_status"] = "ok" if any(c["paper_id"] == paper_id for c in chunks) else "no_text"
         except Exception as exc:
@@ -349,13 +372,14 @@ class RAGEngine:
             except ValueError:
                 self.matrix = None
 
-    def answer(self, question: str, top_k: int = TOP_RAG_EVIDENCE) -> dict:
+    def answer(self, question: str, query_text: str = "", top_k: int = TOP_RAG_EVIDENCE) -> dict:
         question = question.strip()
+        retrieval_query = (query_text or question).strip()
         if not question:
             return {"question": question, "answer": "質問が空です。", "evidence": []}
         if self.matrix is None or self.vectorizer is None:
             return {"question": question, "answer": "検索対象の本文がありません。PDFの配置と文字抽出結果を確認してください。", "evidence": []}
-        query = self.vectorizer.transform([question])
+        query = self.vectorizer.transform([retrieval_query])
         scores = cosine_similarity(query, self.matrix).ravel()
         ranked = sorted(enumerate(scores), key=lambda pair: pair[1], reverse=True)
         evidence = []
@@ -371,11 +395,12 @@ class RAGEngine:
                 "page": chunk["page"],
                 "chunk_id": chunk["chunk_id"],
                 "source_file": chunk["source_file"],
+                "source_url": chunk.get("source_url", ""),
                 "excerpt": chunk["text"][:1200],
             })
         if not evidence:
             answer_text = (
-                "登録文献から質問に十分関連する根拠を検索できませんでした。"
+                "資料からは確認できない：登録文献から質問に十分関連する根拠を検索できませんでした。"
                 "質問を言い換えるか、関連するPDFが登録されているか確認してください。"
             )
         else:
@@ -412,7 +437,10 @@ def main() -> None:
     )
 
     rag = RAGEngine(chunks)
-    rag_answers = [rag.answer(question) for question in QUESTIONS]
+    rag_answers = [
+        rag.answer(item["question"], query_text=item["query"])
+        for item in QUESTIONS
+    ]
     write_jsonl(OUTPUT_DIR / "rag-answers.jsonl", rag_answers)
 
     manifest = {
@@ -440,7 +468,7 @@ def main() -> None:
         "limitations": [
             "Keywords are TF-IDF terms, not validated scientific concepts.",
             "Graph edges represent paper-keyword membership and keyword co-occurrence, not causality.",
-            "RAG uses TF-IDF retrieval and cited excerpts; it does not generate a synthesized LLM answer.",
+            "RAG uses English-focused TF-IDF retrieval with Japanese display questions and English query expansions; it returns cited excerpts, not LLM-synthesized answers.",
             "Scanned PDFs without an OCR text layer may yield no text.",
         ],
     }
@@ -463,7 +491,7 @@ def main() -> None:
             print(f"\nQ: {item['question']}\nA: {item['answer']}")
             for ev in item["evidence"]:
                 print(f"  [{ev['rank']}] {ev['title']} p.{ev['page']} "
-                      f"(score={ev['score']}) — {ev['excerpt'][:240]}...")
+                      f"(score={ev['score']}) — {ev['source_url']} — {ev['excerpt'][:240]}...")
 
 
 if __name__ == "__main__":
