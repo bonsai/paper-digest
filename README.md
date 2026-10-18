@@ -93,3 +93,26 @@ Do not paste the token into notebook code or output cells. The notebook reads it
 - The script accepts `PAPER_DIGEST_WORK_DIR`, `PAPER_DIGEST_DOWNLOAD_DIR`, `PAPER_DIGEST_INPUT_DIR`, and `PAPER_DIGEST_OUTPUT_DIR` so it can run in Colab or Kaggle without changing the pipeline logic.
 
 Colab sessions can disconnect and runtime storage is temporary, so publish outputs before ending the session. GitHub is the durable destination. The former Kaggle Actions submission workflow has been retired; Colab runs are currently started manually from the notebook.
+
+## RAG MCP server (`mcp/rag_mcp.py`)
+
+A stdio MCP server (JSON-RPC 2.0, Python stdlib only) that serves retrieval over the committed `outputs/latest/` artifacts. It performs no LLM calls: `ask` returns page-cited evidence excerpts, and generation (turning excerpts into an answer) is left to the calling LLM, which must cite `paper_id` and `page`.
+
+Run interactively or register it with an MCP-capable agent:
+
+```bash
+python3 mcp/rag_mcp.py   # stdio server; PAPER_DIGEST_ROOT overrides the repo location
+```
+
+opencode registration example:
+
+```jsonc
+// ~/.config/opencode/opencode.jsonc  →  "mcp"
+"paper-digest-rag": {
+  "type": "local",
+  "command": ["python3", "/home/sexy/paper-digest/mcp/rag_mcp.py"],
+  "enabled": true
+}
+```
+
+Tools: `list_papers` (ids, resolved titles, chunk counts, top keywords), `search(query, top_k?, paper_id?)` (BM25-style lexical retrieval with phrase bonus; English queries match best because the corpus is English), `ask(question, top_k?)` (evidence excerpts only, never a generated answer), `get_keywords(paper_id)`, `get_chunk(chunk_id)`. The server indexes on startup and fails tool calls with a clear message when `outputs/latest/` has not been generated yet.
