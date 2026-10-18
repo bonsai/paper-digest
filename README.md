@@ -1,5 +1,7 @@
 # Research & Engineering Knowledge Factory
 
+**[Open the Paper Digest dashboard](https://bonsai.github.io/paper-digest/)** — browse the latest papers, TF-IDF keywords, retrieval evidence, and run manifest.
+
 A reproducible, source-grounded workspace for turning papers, engineering articles, official blogs, and open-source implementations into reusable software-engineering knowledge.
 
 The goal is to connect source evidence to hypotheses, experiments, architecture decisions, GitHub Issues, and continuous improvement. Four-panel comics are an optional publishing format, not the product's main purpose.
