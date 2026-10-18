@@ -1,0 +1,425 @@
+keyword_a,keyword_b,shared_papers
+chains thought,model answer,1
+balls,chains thought,1
+chains thought,heads,1
+chains thought,coin,1
+chains thought,standard prompting,1
+chains thought,today,1
+chains thought,equation,1
+chains thought,computers,1
+chains thought,few-shot exemplars,1
+chains thought,lollipops,1
+chains thought,coin heads,1
+balls,model answer,1
+heads,model answer,1
+coin,model answer,1
+model answer,standard prompting,1
+model answer,today,1
+equation,model answer,1
+computers,model answer,1
+few-shot exemplars,model answer,1
+lollipops,model answer,1
+coin heads,model answer,1
+balls,heads,1
+balls,coin,1
+balls,standard prompting,1
+balls,today,1
+balls,equation,1
+balls,computers,1
+balls,few-shot exemplars,1
+balls,lollipops,1
+balls,coin heads,1
+coin,heads,1
+heads,standard prompting,1
+heads,today,1
+equation,heads,1
+computers,heads,1
+few-shot exemplars,heads,1
+heads,lollipops,1
+coin heads,heads,1
+coin,standard prompting,1
+coin,today,1
+coin,equation,1
+coin,computers,1
+coin,few-shot exemplars,1
+coin,lollipops,1
+coin,coin heads,1
+standard prompting,today,1
+equation,standard prompting,1
+computers,standard prompting,1
+few-shot exemplars,standard prompting,1
+lollipops,standard prompting,1
+coin heads,standard prompting,1
+equation,today,1
+computers,today,1
+few-shot exemplars,today,1
+lollipops,today,1
+coin heads,today,1
+computers,equation,1
+equation,few-shot exemplars,1
+equation,lollipops,1
+coin heads,equation,1
+computers,few-shot exemplars,1
+computers,lollipops,1
+coin heads,computers,1
+few-shot exemplars,lollipops,1
+coin heads,few-shot exemplars,1
+coin heads,lollipops,1
+ai-generated,face consistency,1
+ai-generated,ai-generated videos,1
+ai-generated,fcb,1
+ai-generated,facial consistency,1
+ai-generated,aigcbench,1
+ai-generated,runway,1
+ai-generated,mode,1
+ai-generated,consistency benchmark,1
+ai-generated,face recognition,1
+ai-generated,video,1
+ai-generated,videos,1
+ai-generated videos,face consistency,1
+face consistency,fcb,1
+face consistency,facial consistency,1
+aigcbench,face consistency,1
+face consistency,runway,1
+face consistency,mode,1
+consistency benchmark,face consistency,1
+face consistency,face recognition,1
+face consistency,video,1
+face consistency,videos,1
+ai-generated videos,fcb,1
+ai-generated videos,facial consistency,1
+ai-generated videos,aigcbench,1
+ai-generated videos,runway,1
+ai-generated videos,mode,1
+ai-generated videos,consistency benchmark,1
+ai-generated videos,face recognition,1
+ai-generated videos,video,1
+ai-generated videos,videos,1
+facial consistency,fcb,1
+aigcbench,fcb,1
+fcb,runway,1
+fcb,mode,1
+consistency benchmark,fcb,1
+face recognition,fcb,1
+fcb,video,1
+fcb,videos,1
+aigcbench,facial consistency,1
+facial consistency,runway,1
+facial consistency,mode,1
+consistency benchmark,facial consistency,1
+face recognition,facial consistency,1
+facial consistency,video,1
+facial consistency,videos,1
+aigcbench,runway,1
+aigcbench,mode,1
+aigcbench,consistency benchmark,1
+aigcbench,face recognition,1
+aigcbench,video,1
+aigcbench,videos,1
+mode,runway,1
+consistency benchmark,runway,1
+face recognition,runway,1
+runway,video,1
+runway,videos,1
+consistency benchmark,mode,1
+face recognition,mode,1
+mode,video,1
+mode,videos,1
+consistency benchmark,face recognition,1
+consistency benchmark,video,1
+consistency benchmark,videos,1
+face recognition,video,1
+face recognition,videos,1
+video,videos,1
+assistant,mt-bench,1
+assistant,assistant answer,1
+assistant,votes,1
+assistant,position bias,1
+arena,assistant,1
+assistant,assistants,1
+assistant,grading,1
+assistant,user question,1
+assistant,chatbot arena,1
+agreement,assistant,1
+assistant,llm judges,1
+assistant answer,mt-bench,1
+mt-bench,votes,1
+mt-bench,position bias,1
+arena,mt-bench,1
+assistants,mt-bench,1
+grading,mt-bench,1
+mt-bench,user question,1
+chatbot arena,mt-bench,1
+agreement,mt-bench,1
+llm judges,mt-bench,1
+assistant answer,votes,1
+assistant answer,position bias,1
+arena,assistant answer,1
+assistant answer,assistants,1
+assistant answer,grading,1
+assistant answer,user question,1
+assistant answer,chatbot arena,1
+agreement,assistant answer,1
+assistant answer,llm judges,1
+position bias,votes,1
+arena,votes,1
+assistants,votes,1
+grading,votes,1
+user question,votes,1
+chatbot arena,votes,1
+agreement,votes,1
+llm judges,votes,1
+arena,position bias,1
+assistants,position bias,1
+grading,position bias,1
+position bias,user question,1
+chatbot arena,position bias,1
+agreement,position bias,1
+llm judges,position bias,1
+arena,assistants,1
+arena,grading,1
+arena,user question,1
+arena,chatbot arena,1
+agreement,arena,1
+arena,llm judges,1
+assistants,grading,1
+assistants,user question,1
+assistants,chatbot arena,1
+agreement,assistants,1
+assistants,llm judges,1
+grading,user question,1
+chatbot arena,grading,1
+agreement,grading,1
+grading,llm judges,1
+chatbot arena,user question,1
+agreement,user question,1
+llm judges,user question,1
+agreement,chatbot arena,1
+chatbot arena,llm judges,1
+agreement,llm judges,1
+narrative,omni,1
+narrative,omnivbench,1
+narrative,realization,1
+factor,narrative,1
+narrative,omni-r2v,1
+motion style,narrative,1
+narrative,reference target,1
+content structure,narrative,1
+narrative,storyboard,1
+criterion,narrative,1
+narrative,omni-r2v dataset,1
+omni,omnivbench,1
+omni,realization,1
+factor,omni,1
+omni,omni-r2v,1
+motion style,omni,1
+omni,reference target,1
+content structure,omni,1
+omni,storyboard,1
+criterion,omni,1
+omni,omni-r2v dataset,1
+omnivbench,realization,1
+factor,omnivbench,1
+omni-r2v,omnivbench,1
+motion style,omnivbench,1
+omnivbench,reference target,1
+content structure,omnivbench,1
+omnivbench,storyboard,1
+criterion,omnivbench,1
+omni-r2v dataset,omnivbench,1
+factor,realization,1
+omni-r2v,realization,1
+motion style,realization,1
+realization,reference target,1
+content structure,realization,1
+realization,storyboard,1
+criterion,realization,1
+omni-r2v dataset,realization,1
+factor,omni-r2v,1
+factor,motion style,1
+factor,reference target,1
+content structure,factor,1
+factor,storyboard,1
+criterion,factor,1
+factor,omni-r2v dataset,1
+motion style,omni-r2v,1
+omni-r2v,reference target,1
+content structure,omni-r2v,1
+omni-r2v,storyboard,1
+criterion,omni-r2v,1
+omni-r2v,omni-r2v dataset,1
+motion style,reference target,1
+content structure,motion style,1
+motion style,storyboard,1
+criterion,motion style,1
+motion style,omni-r2v dataset,1
+content structure,reference target,1
+reference target,storyboard,1
+criterion,reference target,1
+omni-r2v dataset,reference target,1
+content structure,storyboard,1
+content structure,criterion,1
+content structure,omni-r2v dataset,1
+criterion,storyboard,1
+omni-r2v dataset,storyboard,1
+criterion,omni-r2v dataset,1
+manual single,prompting,1
+llms,manual single,1
+cot prompting,manual single,1
+bot,manual single,1
+cod,manual single,1
+manual single,multi gpt-3,1
+eedp,manual single,1
+manual single,prompting llms,1
+generated multi,manual single,1
+enhances,manual single,1
+manual single,vlms,1
+llms,prompting,1
+cot prompting,prompting,1
+bot,prompting,1
+cod,prompting,1
+multi gpt-3,prompting,1
+eedp,prompting,1
+prompting,prompting llms,1
+generated multi,prompting,1
+enhances,prompting,1
+prompting,vlms,1
+cot prompting,llms,1
+bot,llms,1
+cod,llms,1
+llms,multi gpt-3,1
+eedp,llms,1
+llms,prompting llms,1
+generated multi,llms,1
+enhances,llms,1
+llms,vlms,1
+bot,cot prompting,1
+cod,cot prompting,1
+cot prompting,multi gpt-3,1
+cot prompting,eedp,1
+cot prompting,prompting llms,1
+cot prompting,generated multi,1
+cot prompting,enhances,1
+cot prompting,vlms,1
+bot,cod,1
+bot,multi gpt-3,1
+bot,eedp,1
+bot,prompting llms,1
+bot,generated multi,1
+bot,enhances,1
+bot,vlms,1
+cod,multi gpt-3,1
+cod,eedp,1
+cod,prompting llms,1
+cod,generated multi,1
+cod,enhances,1
+cod,vlms,1
+eedp,multi gpt-3,1
+multi gpt-3,prompting llms,1
+generated multi,multi gpt-3,1
+enhances,multi gpt-3,1
+multi gpt-3,vlms,1
+eedp,prompting llms,1
+eedp,generated multi,1
+eedp,enhances,1
+eedp,vlms,1
+generated multi,prompting llms,1
+enhances,prompting llms,1
+prompting llms,vlms,1
+enhances,generated multi,1
+generated multi,vlms,1
+enhances,vlms,1
+basic cot,different prompting,1
+basic cot,codex code-davinci-002,1
+basic cot,strategies llm,1
+basic cot,llm sota,1
+basic cot,dataset prompting,1
+basic cot,experimented,1
+basic cot,table-based,1
+basic cot,table prompt,1
+basic cot,best performing,1
+basic cot,performing prompting,1
+basic cot,gpt-3 text-davinci-003,1
+codex code-davinci-002,different prompting,1
+different prompting,strategies llm,1
+different prompting,llm sota,1
+dataset prompting,different prompting,1
+different prompting,experimented,1
+different prompting,table-based,1
+different prompting,table prompt,1
+best performing,different prompting,1
+different prompting,performing prompting,1
+different prompting,gpt-3 text-davinci-003,1
+codex code-davinci-002,strategies llm,1
+codex code-davinci-002,llm sota,1
+codex code-davinci-002,dataset prompting,1
+codex code-davinci-002,experimented,1
+codex code-davinci-002,table-based,1
+codex code-davinci-002,table prompt,1
+best performing,codex code-davinci-002,1
+codex code-davinci-002,performing prompting,1
+codex code-davinci-002,gpt-3 text-davinci-003,1
+llm sota,strategies llm,1
+dataset prompting,strategies llm,1
+experimented,strategies llm,1
+strategies llm,table-based,1
+strategies llm,table prompt,1
+best performing,strategies llm,1
+performing prompting,strategies llm,1
+gpt-3 text-davinci-003,strategies llm,1
+dataset prompting,llm sota,1
+experimented,llm sota,1
+llm sota,table-based,1
+llm sota,table prompt,1
+best performing,llm sota,1
+llm sota,performing prompting,1
+gpt-3 text-davinci-003,llm sota,1
+dataset prompting,experimented,1
+dataset prompting,table-based,1
+dataset prompting,table prompt,1
+best performing,dataset prompting,1
+dataset prompting,performing prompting,1
+dataset prompting,gpt-3 text-davinci-003,1
+experimented,table-based,1
+experimented,table prompt,1
+best performing,experimented,1
+experimented,performing prompting,1
+experimented,gpt-3 text-davinci-003,1
+table prompt,table-based,1
+best performing,table-based,1
+performing prompting,table-based,1
+gpt-3 text-davinci-003,table-based,1
+best performing,table prompt,1
+performing prompting,table prompt,1
+gpt-3 text-davinci-003,table prompt,1
+best performing,performing prompting,1
+best performing,gpt-3 text-davinci-003,1
+gpt-3 text-davinci-003,performing prompting,1
+adversarial prompts,attacks,1
+adversarial,attacks,1
+attacks,promptrobust,1
+attack,attacks,1
+attacks,bertattack,1
+attacks,deepwordbug,1
+attacks,perturbations,1
+adversarial,adversarial prompts,1
+adversarial prompts,promptrobust,1
+adversarial prompts,attack,1
+adversarial prompts,bertattack,1
+adversarial prompts,deepwordbug,1
+adversarial prompts,perturbations,1
+adversarial,promptrobust,1
+adversarial,attack,1
+adversarial,bertattack,1
+adversarial,deepwordbug,1
+adversarial,perturbations,1
+attack,promptrobust,1
+bertattack,promptrobust,1
+deepwordbug,promptrobust,1
+perturbations,promptrobust,1
+attack,bertattack,1
+attack,deepwordbug,1
+attack,perturbations,1
+bertattack,deepwordbug,1
+bertattack,perturbations,1
+deepwordbug,perturbations,1

@@ -1,0 +1,33 @@
+{
+  "pipeline": "paper-digest-kaggle-single-file",
+  "created_at_utc": "2026-10-18T00:08:37.105681+00:00",
+  "python_version": "3.13.16 (main, Oct  1 2026, 15:40:24) [GCC 13.3.0]",
+  "input_pdf_count": 9,
+  "configured_pdf_url_count": 9,
+  "downloaded_pdf_url_count": 9,
+  "cached_pdf_url_count": 0,
+  "failed_pdf_url_count": 0,
+  "paper_count": 9,
+  "page_aware_chunk_count": 705,
+  "keyword_row_count": 108,
+  "rag_question_count": 0,
+  "extraction_error_count": 0,
+  "graph": {
+    "nodes": 89,
+    "edges": 80,
+    "html": "/content/paper-digest-work/paper-digest-output/keyword-graph.html"
+  },
+  "configuration": {
+    "chunk_words": 220,
+    "chunk_overlap_words": 40,
+    "top_keywords_per_paper": 12,
+    "top_rag_evidence": 5,
+    "min_rag_score": 0.015
+  },
+  "limitations": [
+    "Keywords are TF-IDF terms, not validated scientific concepts.",
+    "Graph edges represent paper-keyword membership and keyword co-occurrence, not causality.",
+    "RAG uses TF-IDF retrieval and cited excerpts; it does not generate a synthesized LLM answer.",
+    "Scanned PDFs without an OCR text layer may yield no text."
+  ]
+}
