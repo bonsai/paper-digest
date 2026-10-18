@@ -1,9 +1,9 @@
-{"url": "https://arxiv.org/pdf/2407.12994", "final_url": "https://arxiv.org/pdf/2407.12994", "filename": "prompt-engineering-survey-vatsal-dubey-2024.pdf", "status": "downloaded", "bytes": 432410, "sha256": "b83f159e9fb17ebd987abfdba033d1b80a3446609355480da17a452cec19ee9b"}
-{"url": "https://arxiv.org/pdf/2402.07927", "final_url": "https://arxiv.org/pdf/2402.07927", "filename": "prompt-engineering-survey-sahoo-2024.pdf", "status": "downloaded", "bytes": 319200, "sha256": "9333bb4e9e1f94ed0ce7a3d3af30ddf80eabbe5d087f6d1a4e8b77209bc81667"}
-{"url": "https://arxiv.org/pdf/2201.11903", "final_url": "https://arxiv.org/pdf/2201.11903", "filename": "chain-of-thought-prompting-2022.pdf", "status": "downloaded", "bytes": 891773, "sha256": "7d9f878c23b460e4566aa4ec9201b1abfb3b8faefb2b1356e411cb90fef72a12"}
-{"url": "https://arxiv.org/pdf/2306.04528", "final_url": "https://arxiv.org/pdf/2306.04528", "filename": "promptrobust-2023.pdf", "status": "downloaded", "bytes": 780406, "sha256": "49eb350182156b245867622bd561dd109525179065b5424bdf205ab149b00ac3"}
-{"url": "https://arxiv.org/pdf/2306.05685", "final_url": "https://arxiv.org/pdf/2306.05685", "filename": "mt-bench-chatbot-arena-2023.pdf", "status": "downloaded", "bytes": 1580141, "sha256": "1574982845157569b85c1214bfa9987000384d7a5e3b5fbdcc5a29afec59cb81"}
-{"url": "https://arxiv.org/pdf/2512.06905", "final_url": "https://arxiv.org/pdf/2512.06905", "filename": "scaling-zero-shot-reference-to-video-2025.pdf", "status": "downloaded", "bytes": 17161707, "sha256": "3dd01fe082ed2bb9c451890d292e63583e1bd52c186510441c5c41b324e3b4ee"}
-{"url": "https://arxiv.org/pdf/2603.25743", "final_url": "https://arxiv.org/pdf/2603.25743", "filename": "refalign-reference-to-video-2026.pdf", "status": "downloaded", "bytes": 12093528, "sha256": "2b3b21221a0c4720e1cd7d6c89bf1f0b2d2bb29a1fdf45473510b08bcfcdb429"}
-{"url": "https://arxiv.org/pdf/2609.22069", "final_url": "https://arxiv.org/pdf/2609.22069", "filename": "omnivbench-2026.pdf", "status": "downloaded", "bytes": 8261212, "sha256": "088071002b1559c6c40198d9af3271e11136a4310bc1edfb6d4acda672fabb30"}
-{"url": "https://arxiv.org/pdf/2505.11425", "final_url": "https://arxiv.org/pdf/2505.11425", "filename": "face-consistency-benchmark-2025.pdf", "status": "downloaded", "bytes": 144154, "sha256": "82bd872675d3fc25c4f472f4272ca7c43ffd5ca17cee696ef1bd7df6c976c777"}
+{"url": "https://arxiv.org/pdf/2407.12994", "filename": "prompt-engineering-survey-vatsal-dubey-2024.pdf", "status": "cached", "bytes": 432410}
+{"url": "https://arxiv.org/pdf/2402.07927", "filename": "prompt-engineering-survey-sahoo-2024.pdf", "status": "cached", "bytes": 319200}
+{"url": "https://arxiv.org/pdf/2201.11903", "filename": "chain-of-thought-prompting-2022.pdf", "status": "cached", "bytes": 891773}
+{"url": "https://arxiv.org/pdf/2306.04528", "filename": "promptrobust-2023.pdf", "status": "cached", "bytes": 780406}
+{"url": "https://arxiv.org/pdf/2306.05685", "filename": "mt-bench-chatbot-arena-2023.pdf", "status": "cached", "bytes": 1580141}
+{"url": "https://arxiv.org/pdf/2512.06905", "filename": "scaling-zero-shot-reference-to-video-2025.pdf", "status": "cached", "bytes": 17161707}
+{"url": "https://arxiv.org/pdf/2603.25743", "filename": "refalign-reference-to-video-2026.pdf", "status": "cached", "bytes": 12093528}
+{"url": "https://arxiv.org/pdf/2609.22069", "filename": "omnivbench-2026.pdf", "status": "cached", "bytes": 8261212}
+{"url": "https://arxiv.org/pdf/2505.11425", "filename": "face-consistency-benchmark-2025.pdf", "status": "cached", "bytes": 144154}
