@@ -1,5 +1,30 @@
-# Minimal dependencies for the first PDF-ingestion milestone
+# paper-digest dependencies, grouped by pipeline stage.
+# Primary runtime: Google Colab (Kaggle cannot push outputs to GitHub).
+# Install: pip install -r requirements.txt
+
+# --- ingest: page-aware PDF extraction ---------------------------------------
 PyMuPDF>=1.24,<2
+
+# --- compute: tables, numerics, TF-IDF keywords, graph -----------------------
 pandas>=2.0,<4
 numpy>=1.24,<3
+scikit-learn>=1.3
+networkx>=3.0
+
+# --- interpretation: evidence-grounded digest -> four-panel comic script ------
+langchain
+
+# --- narration: comic narration audio ----------------------------------------
+gTTS
+
+# --- mux: panel frames + narration -> video ----------------------------------
+moviepy
+
+# --- display: dashboard, API, and MCP integration ----------------------------
 plotly>=5.18,<7
+fastapi
+fastmcp
+
+# --- workflow notes (not pip packages) ---------------------------------------
+# gh (GitHub CLI) publishes outputs/ from Colab cells; it is not a pip dependency.
+# Kaggle failed to push to GitHub, Colab succeeded -> Colab is the canonical workflow.

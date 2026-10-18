@@ -8,18 +8,21 @@ The goal is to connect source evidence to hypotheses, experiments, architecture 
 
 ## Project documents
 
-- [Market Requirements Document](docs/mrd-paper-explorer.md)
-- [Product Requirements Document](docs/prd-paper-explorer.md)
-- [Kaggle notebook scaffold](notebooks/kaggle/paper-digest-mvp.ipynb)
-- [Research source list: papers, software-factory articles, and implementation cases](data/sources/paper-list.md)
-- [Separate bibliography: prompt-only LLM methods and evaluation](data/sources/prompt-only-llm-evaluation-list.md)
-- [Machine-readable JSONL bibliography: prompt-only LLM methods and evaluation](data/sources/prompt-only-llm-evaluation-list.jsonl)
-- [Prompt-only LLM research map and experiment protocol](data/sources/prompt-only-llm-evaluation.md)
-- [Machine-readable source manifest](data/sources/r2v-papers.yaml)
+- [Market Requirements Document](dev/mrd-paper-explorer.md)
+- [Product Requirements Document](dev/prd-paper-explorer.md)
+- [Colab notebook: full pipeline with GitHub publishing](notebooks/colab/paper_digest_colab.ipynb)
+- [Colab notebook: MVP scaffold (manifest and hashes)](notebooks/colab/paper_digest_mvp_colab.ipynb)
+- [Colab notebook: keyword/intent ML baselines](notebooks/colab/keyword_intent_ml_colab.ipynb)
+- [Kaggle notebooks (legacy, optional)](notebooks/kaggle/)
+- [Research source list: papers, software-factory articles, and implementation cases](inputs/sources/paper-list.md)
+- [Separate bibliography: prompt-only LLM methods and evaluation](inputs/sources/prompt-only-llm-evaluation-list.md)
+- [Machine-readable JSONL bibliography: prompt-only LLM methods and evaluation](inputs/sources/prompt-only-llm-evaluation-list.jsonl)
+- [Prompt-only LLM research map and experiment protocol](inputs/sources/prompt-only-llm-evaluation.md)
+- [Machine-readable source manifest](inputs/sources/r2v-papers.yaml)
 
 ## MVP workflow
 
-1. Add permitted research PDFs to a local or Kaggle input folder; do not commit copyrighted PDFs unless their license permits redistribution.
+1. Add permitted research PDFs to a local or Colab input folder (`inputs/literature/`); do not commit copyrighted PDFs unless their license permits redistribution.
 2. Extract page-aware text and record extraction errors.
 3. Create searchable chunks with paper, page, and chunk identifiers.
 4. Explore keywords and relationships with pandas, NumPy, and Plotly.
@@ -40,9 +43,9 @@ The single-file pipeline is implemented at [`notebooks/kaggle/paper_digest.py`](
 
 ## Local setup
 
-The notebook is designed to run in Kaggle or a compatible Python environment. The initial baseline should avoid paid APIs and GPU requirements.
+The notebooks are designed to run in Google Colab (primary), Kaggle, or any compatible Python environment. The initial baseline should avoid paid APIs and GPU requirements.
 
-Suggested libraries: pandas, NumPy, Plotly, PyMuPDF (fitz), and SQLite FTS5. Pin and record versions when the pipeline is implemented.
+Dependencies are managed in [`requirements.txt`](requirements.txt), split by pipeline stage (ingest / compute / interpretation / narration / display). Pin and record versions when the pipeline changes.
 
 ## Scope note
 

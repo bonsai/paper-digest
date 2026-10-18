@@ -5,7 +5,7 @@
 - Related: [MRD](mrd-paper-explorer.md)
 - Target corpus: a small, mixed source set of papers, engineering articles, official blogs, OSS repositories, and case studies; source access and usage terms must be verified
 - Initial scope: AI software factory, agentic software engineering, GitHub automation, quality/evaluation loops, organizational learning, and human-AI collaboration; comics are optional outputs
-- Runtime priority: Kaggle / local Python, free and reproducible
+- Runtime priority: Google Colab (primary; GitHub push verified) / local Python; Kaggle optional for ML experiments, free and reproducible
 
 ## 1. Product definition
 
@@ -38,9 +38,9 @@ flowchart TD
     D --> E[Paper metadata and chunks]
     E --> F[SQLite FTS5 retrieval]
     E --> G[Keyword candidates]
-    G --> H[Kaggle ML keywording]
+    G --> H[Colab ML keywording]
     H --> I[Typed dynamic graph]
-    J[Manually reviewed query-intent labels] --> K[Kaggle intent classifier]
+    J[Manually reviewed query-intent labels] --> K[Colab intent classifier]
     K --> L[Intent-aware retrieval routing]
     F --> L
     L --> M[RAG answer with page citations]
@@ -54,7 +54,7 @@ flowchart TD
 - Plotly for dynamic graph and diagnostics
 - SQLite FTS5 as lexical RAG baseline
 - scikit-learn for TF-IDF keyword baselines and optional query-intent classifier
-- Kaggle Notebook for reproducible training/evaluation
+- Google Colab Notebook as the primary reproducible training/evaluation environment (clone from GitHub, `%pip install` with pinned ranges); Kaggle Notebook optional for the same ML steps
 - Optional embedding/LLM experiments only after a measured baseline
 
 No paid API, GPU, or hosted vector database is required for the initial baseline.
@@ -86,7 +86,7 @@ No paid API, GPU, or hosted vector database is required for the initial baseline
 - Unknown values remain unknown and are traceable to manual or extracted metadata.
 - Domain labels include `live_action`, `anime_2d`, `animation_3d_cg`, `mixed`, and `unknown`.
 
-### US-04 — Kaggle ML keywording
+### US-04 — Colab ML keywording
 
 **Baseline:** TF-IDF over page-aware chunks, with configurable n-gram range and stop words. Optional scikit-learn clustering may be evaluated later.
 
@@ -108,7 +108,7 @@ Acceptance:
 - Evaluate on a manually reviewed sample; report precision and sample size.
 - With only 10 papers, describe the output as exploratory and do not claim generalization.
 
-### US-05 — Kaggle query-intent classification
+### US-05 — Colab query-intent classification
 
 Initial intent taxonomy:
 - `summarize`
@@ -122,7 +122,7 @@ Initial intent taxonomy:
 - `other_or_unclear`
 
 Training data:
-- Separate `data/labels/intent_examples.csv` with fields `query_id`, `query_text`, `intent_label`, `split`, `review_status`.
+- Separate `inputs/labels/intent_examples.csv` with fields `query_id`, `query_text`, `intent_label`, `split`, `review_status`.
 - Labels must be human-reviewed. Keep synthetic examples separately marked and exclude them from claims about real user behavior.
 - Do not split paraphrases of the same base query across train and test.
 - Use a simple TF-IDF + LogisticRegression baseline first; compare with a majority-class baseline.
@@ -167,6 +167,8 @@ Each candidate includes claim, category, supporting citations, counterevidence, 
 
 ## 5. Notebook layout
 
+Implementation notebooks live under `notebooks/colab/` (primary) and `notebooks/kaggle/` (legacy/optional). The planned section order below maps onto the Colab notebooks; the current MVP scaffold and ML notebooks cover the setup, keywording, and intent steps.
+
 1. `00 Setup & Source Manifest`
 2. `01 PDF Acquisition QA`
 3. `02 Page-aware Ingestion`
@@ -194,10 +196,12 @@ No score should be published until a real run has produced it.
 1. Mirror/validate R2V source records; resolve the 10-paper corpus.
 2. Explicit download and page-aware ingestion with provenance.
 3. TF-IDF keyword candidates and human review.
-4. Intent label schema and labeled examples; baseline classifier in Kaggle.
+4. Intent label schema and labeled examples; baseline classifier in Colab.
 5. Typed Plotly graph.
 6. FTS5 RAG, evidence citations, and optional intent-aware routing.
 7. Insight review, evaluation, and export.
+8. (Optional) Secondary comic/TTS/video narration pipeline using the same provenance; kept out of the MVP dependency surface.
+9. (Optional) Kaggle mirrors of the ML notebooks for GPU/competitions; Colab remains canonical.
 
 ## 8. Definition of done
 
@@ -208,7 +212,30 @@ No score should be published until a real run has produced it.
 - Graph nodes navigate to papers/chunks.
 - RAG provides page-level citations and abstains when unsupported.
 - Insight candidates contain counterevidence/limitations and require human review.
-- Kaggle execution is reproducible from documented inputs and outputs.
+- Kaggle/Colab execution is reproducible from documented inputs and outputs; Colab is the reference runtime.
+
+## 9. Execution environment and dependency policy
+
+### Colab-first rationale
+
+Google Colab is the primary runtime because it was verified to push notebooks to this GitHub repository, while Kaggle could not. Every Colab notebook starts with a `%pip install` cell (pinned ranges from `requirements.txt`) and a clone of `https://github.com/bonsai/paper-digest.git`, so results are reproducible from the repository alone. Kaggle remains an optional environment for ML experiments that benefit from GPUs or competitions; its notebooks are kept for reference but are no longer canonical.
+
+### Dependency tiers
+
+`requirements.txt` is split by pipeline stage so the MVP install stays small:
+
+| Stage | Packages | Used by |
+| --- | --- | --- |
+| ingest | PyMuPDF | page-aware PDF extraction |
+| compute | pandas, NumPy, scikit-learn, networkx | TF-IDF keywording, intent baseline, keyword graph |
+| interpretation | langchain | optional RAG/LLM experiments (after a measured baseline) |
+| narration (secondary) | gTTS, moviepy | comic/TTS/video narration pipeline |
+| display | plotly, fastapi, fastmcp | dynamic graph, quick inspection servers |
+
+Notes:
+- `gh` is a CLI tool (installed on the host, and available inside Colab via `apt`), not a pip package.
+- No paid API, GPU, or hosted vector database is required for the MVP baseline.
+- The comic/TTS/video pipeline is a secondary deliverable; its dependencies are optional and it does not block the core research workflow.
 
 
 ## 10. Article and repository ingestion
